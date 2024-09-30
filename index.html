@@ -9,55 +9,55 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            display: flex;          /* Use flexbox */
-            justify-content: center; /* Center horizontally */
-            align-items: center;    /* Center vertically */
-            height: 100vh;         /* Full viewport height */
-            flex-direction: column; /* Stack items vertically */
-            background-color: #a83232; /* Saffron background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #a83232;
         }
         form {
             margin-bottom: 20px;
-            display: flex;          /* Use flexbox for the form */
-            flex-direction: column; /* Stack elements vertically */
-            align-items: center;    /* Center elements */
-            width: 100%;           /* Full width for the form */
-            max-width: 400px;      /* Limit max width for larger screens */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
         }
         input, select {
-            width: 100%;           /* Full width for inputs */
-            padding: 10px;         /* Add padding for better touch targets */
-            margin: 10px 0;        /* Space between elements */
-            border: 1px solid #ccc; /* Light border */
-            border-radius: 5px;     /* Rounded corners */
-            font-size: 16px;        /* Font size */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         button {
-            background-color: #007bff; /* Bootstrap primary color */
-            color: white;               /* Text color */
-            border: none;               /* No border */
-            border-radius: 5px;        /* Rounded corners */
-            padding: 10px;             /* Padding */
-            font-size: 16px;           /* Font size */
-            cursor: pointer;           /* Pointer cursor */
-            transition: background-color 0.3s; /* Smooth transition */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #0056b3; /* Darker shade on hover */
+            background-color: #0056b3;
         }
         #result {
             margin-top: 20px;
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            display: none; /* Initially hidden */
-            width: 100%;   /* Full width for the result */
-            max-width: 600px; /* Max width to limit size */
-            max-height: 400px; /* Set a max height for scrolling */
-            overflow: auto;  /* Enable scrolling */
-            background-color: white; /* White background for contrast */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            max-height: 400px;
+            overflow: auto;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         table {
             width: 100%;
@@ -73,34 +73,33 @@
             background-color: #f2f2f2;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
         // Function to handle form submission and result display
         async function handleSearch(event) {
             event.preventDefault();  // Prevent default form submission
-            const name = document.querySelector('input[name="name"]').value; // Get input value
-            const inputType = document.querySelector('select[name="inputType"]').value; // Get selected input type
-            
+            const name = document.querySelector('input[name="name"]').value.toLowerCase();
+            const inputType = document.querySelector('select[name="inputType"]').value;
+
             const resultDiv = document.getElementById("result");
             resultDiv.innerHTML = ''; // Clear previous results
 
             try {
-                // Make a POST request to the backend
-                const response = await fetch('/search', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({ name: name, inputType: inputType }) // Send form data
-                });
+                // Load the appropriate CSV file based on input type
+                const response = await fetch(`data/${inputType}_data.csv`);
+                const csvText = await response.text();
 
-                if (!response.ok) {
-                    throw new Error('No Records Found!!');
-                }
+                // Parse the CSV using PapaParse
+                const data = Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true
+                }).data;
 
-                const data = await response.json(); // Assuming the API returns JSON
+                // Filter data based on the name search (case-insensitive)
+                const filteredData = data.filter(row => row.name.toLowerCase().includes(name));
 
                 // Check if any results were found
-                if (data.length === 0) {
+                if (filteredData.length === 0) {
                     resultDiv.textContent = `No results found for "${name}".`;
                 } else {
                     // Create a table to display the results
@@ -109,7 +108,7 @@
                     const tbody = document.createElement('tbody');
 
                     // Create table headers based on keys of the first object
-                    const headers = Object.keys(data[0]).reverse();
+                    const headers = Object.keys(filteredData[0]);
                     const headerRow = document.createElement('tr');
                     headers.forEach(header => {
                         const th = document.createElement('th');
@@ -117,9 +116,9 @@
                         headerRow.appendChild(th);
                     });
                     thead.appendChild(headerRow);
-                    
+
                     // Populate table rows with data
-                    data.forEach(item => {
+                    filteredData.forEach(item => {
                         const row = document.createElement('tr');
                         headers.forEach(header => {
                             const td = document.createElement('td');
@@ -147,9 +146,7 @@
 </head>
 <body>
     <!-- Replace the header with an image -->
- <img src="images/image.jpeg" alt="Search Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
-
-    <!--  <iframe src="https://drive.google.com/file/d/1etXvs9DP1riyxp5yc0wNA2-K6VxnUkhR/preview"  allow="autoplay"></iframe> -->
+    <img src="images/image.jpeg" alt="Search Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
 
     <form id="searchForm" onsubmit="handleSearch(event)">
         <select name="inputType" required>
@@ -157,8 +154,8 @@
             <option value="bazaar">Bazaar Chanda</option>
             <option value="office">Office Chanda</option>
             <option value="gramin">Gramin Chanda</option>
-             <option value="navyuvak">Navyuvak Chanda</option>
-             <option value="patna">Patna Chanda</option>
+            <option value="navyuvak">Navyuvak Chanda</option>
+            <option value="patna">Patna Chanda</option>
         </select>
 
         <!-- Input box for name -->
