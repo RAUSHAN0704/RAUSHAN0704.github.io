@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>दुर्गा पूजा समिति सरमेरा - दान खोज</title>
-    <meta name="description" content="पिछले वर्ष के दान का विवरण देखने के लिए नाम से खोजें। दुर्गा पूजा समिति सरमेरा में आपका स्वागत है।"/>
+    <title>Durga Puja Samiti Sarmera - Donor Search</title>
+    <meta name="description" content="Search and view last year's donation details by name at Durga Puja Samiti Sarmera. Thank you for supporting the community!"/>
     <style>
         body, html {
             margin: 0;
@@ -219,7 +219,7 @@
 
             if (!name) {
                 loading.style.display = 'none';
-                resultDiv.innerHTML = '<p class="no-results">कृपया खोजने के लिए नाम दर्ज करें।</p>';
+                resultDiv.innerHTML = '<p class="no-results">Please enter a name to search.</p>';
                 resultDiv.style.display = 'block';
                 return;
             }
@@ -237,7 +237,7 @@
 
                 if (currentFiltered.length === 0) {
                     loading.style.display = 'none';
-                    resultDiv.innerHTML = `<p class="no-results">"${name}" के लिए कोई परिणाम नहीं मिला।</p>`;
+                    resultDiv.innerHTML = `<p class="no-results">No results found for "${name}".</p>`;
                     resultDiv.style.display = 'block';
                 } else {
                     displayResults(currentFiltered);
@@ -245,7 +245,7 @@
                     thankYou.style.display = 'block';
                 }
             } catch (error) {
-                resultDiv.innerHTML = `<p class="no-results">त्रुटि: ${error.message}</p>`;
+                resultDiv.innerHTML = `<p class="no-results">Error: ${error.message}</p>`;
                 resultDiv.style.display = 'block';
             } finally {
                 loading.style.display = 'none';
@@ -284,7 +284,7 @@
             resultDiv.appendChild(table);
 
             const downloadBtn = document.createElement('button');
-            downloadBtn.textContent = "परिणाम डाउनलोड करें";
+            downloadBtn.textContent = "Download Results";
             downloadBtn.classList.add("download-btn");
             downloadBtn.onclick = () => downloadCSV(data, headers);
             resultDiv.appendChild(downloadBtn);
@@ -333,34 +333,34 @@
         <source src="videos/donation.mp4" type="video/mp4" />
         <source src="videos/donation.webm" type="video/webm" />
         <source src="videos/donation.ogv" type="video/ogg" />
-        आपका ब्राउज़र वीडियो टैग का समर्थन नहीं करता।
+        Your browser does not support the video tag.
     </video>
     <div class="overlay"></div>
 
     <div class="container">
         <div class="header">
-            <h1>दुर्गा पूजा समिति सरमेरा</h1>
-            <span>(स्थापित: 1937)</span>
-            <p>पिछले वर्ष आपके द्वारा दिए गए योगदान के लिए धन्यवाद! नीचे अपना नाम दर्ज करें और दान का विवरण देखें।</p>
+            <h1>Durga Puja Samiti Sarmera</h1>
+            <span>(ESTD. 1937)</span>
+            <p>Thank you for your generous contributions last year! Search below to view your donation details.</p>
         </div>
 
         <form id="searchForm" onsubmit="handleSearch(event)">
             <select name="inputType" required>
-                <option value="" disabled selected>चंदा का प्रकार चुनें</option>
-                <option value="bazaar">बाज़ार चंदा</option>
-                <option value="office">ऑफिस चंदा</option>
-                <option value="gramin">ग्रामीण चंदा</option>
-                <option value="patna">पटना चंदा</option>
-                <option value="navyuvak" selected>नवयुवक चंदा</option>
+                <option value="" disabled selected>Select Type</option>
+                <option value="bazaar">Bazaar Chanda</option>
+                <option value="office">Office Chanda</option>
+                <option value="gramin">Gramin Chanda</option>
+                <option value="patna">Patna Chanda</option>
+                <option value="navyuvak" selected>Navyuvak Chanda</option>
             </select>
-            <input type="text" name="name" placeholder="अपना नाम दर्ज करें" required />
-            <button type="submit">खोजें</button>
+            <input type="text" name="name" placeholder="Enter name" required />
+            <button type="submit">Search</button>
         </form>
 
-        <div class="loading">डेटा लोड हो रहा है...</div>
+        <div class="loading">Loading data...</div>
 
         <div class="thank-you-message">
-            धन्यवाद, <span id="donorName"></span>, आपके समर्थन के लिए!
+            Thank you, <span id="donorName"></span>, for your support!
         </div>
 
         <div id="result"></div>
