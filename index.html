@@ -1,170 +1,369 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Durga Puja Samiti Sarmera</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>दुर्गा पूजा समिति सरमेरा - दान खोज</title>
+    <meta name="description" content="पिछले वर्ष के दान का विवरण देखने के लिए नाम से खोजें। दुर्गा पूजा समिति सरमेरा में आपका स्वागत है।"/>
     <style>
-        /* Simple styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background-color: #121212;
+            color: #ddd;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            background-color: #a83232;
+            min-height: 100vh;
+            padding: 20px;
         }
-        form {
+
+        .container {
+            position: relative;
+            z-index: 2;
+            background: rgba(30, 30, 30, 0.85);
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            color: #ddd;
+        }
+
+        .header {
             margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #f8e71c, #4caf50, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s infinite alternate;
+            margin: 0;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #ff6b6b, 0 0 10px #f8e71c, 0 0 20px #4caf50;
+            }
+            to {
+                text-shadow: 0 0 10px #00bcd4, 0 0 20px #4caf50, 0 0 30px #f8e71c;
+            }
+        }
+
+        .header span {
+            display: block;
+            font-size: 14px;
+            color: #bbb;
+            margin-top: 4px;
+        }
+
+        .header p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        form {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 400px;
+            gap: 15px;
         }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+
+        select, input {
+            padding: 12px 15px;
+            border: 1px solid #555;
+            border-radius: 8px;
             font-size: 16px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #222;
+            color: #ddd;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
+
+        select:focus, input:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 5px rgba(255,107,107,0.7);
+            outline: none;
+        }
+
         button {
-            background-color: #007bff;
+            background-color: #ff6b6b;
             color: white;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
-            padding: 10px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: #ff3b3b;
+            transform: translateY(-2px);
         }
+
         #result {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: none;
-            width: 100%;
-            max-width: 600px;
+            margin-top: 25px;
+            background-color: rgba(30,30,30,0.9);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            padding: 20px;
             max-height: 400px;
-            overflow: auto;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            display: none;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            font-size: 14px;
         }
+
         th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            padding: 10px;
+            border-bottom: 1px solid #555;
+        }
+
+        th {
+            background-color: #333;
             text-align: left;
         }
-        th {
-            background-color: #f2f2f2;
+
+        tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+
+        .no-results {
+            font-style: italic;
+            color: #aaa;
+        }
+
+        .thank-you-message {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #2e7d32;
+            color: #e8f5e9;
+            border: 1px solid #1b5e20;
+            border-radius: 8px;
+            display: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .loading {
+            margin-top: 20px;
+            display: none;
+            font-style: italic;
+        }
+
+        .download-btn {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
-        // Function to handle form submission and result display
-        async function handleSearch(event) {
-            event.preventDefault();  // Prevent default form submission
-            const name = document.querySelector('input[name="name"]').value.toLowerCase();
-            const inputType = document.querySelector('select[name="inputType"]').value;
+        document.addEventListener("DOMContentLoaded", () => {
+            const nameInput = document.querySelector('input[name="name"]');
+            nameInput.addEventListener("input", handleAutocomplete);
+        });
 
+        let allData = [];
+        let currentFiltered = [];
+
+        async function handleSearch(event) {
+            event.preventDefault();
+
+            const name = document.querySelector('input[name="name"]').value.trim().toLowerCase();
+            const inputType = document.querySelector('select[name="inputType"]').value;
             const resultDiv = document.getElementById("result");
-            resultDiv.innerHTML = ''; // Clear previous results
+            const thankYou = document.querySelector(".thank-you-message");
+            const loading = document.querySelector(".loading");
+
+            resultDiv.style.display = 'none';
+            thankYou.style.display = 'none';
+            loading.style.display = 'block';
+            resultDiv.innerHTML = '';
+
+            if (!name) {
+                loading.style.display = 'none';
+                resultDiv.innerHTML = '<p class="no-results">कृपया खोजने के लिए नाम दर्ज करें।</p>';
+                resultDiv.style.display = 'block';
+                return;
+            }
 
             try {
-                // Load the appropriate CSV file based on input type
                 const response = await fetch(`data/${inputType}_data.csv`);
                 const csvText = await response.text();
 
-                // Parse the CSV using PapaParse
-                const data = Papa.parse(csvText, {
+                allData = Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true
                 }).data;
 
-                // Filter data based on the name search (case-insensitive)
-                const filteredData = data.filter(row => row.name.toLowerCase().includes(name));
+                currentFiltered = allData.filter(row => row.name.toLowerCase().includes(name));
 
-                // Check if any results were found
-                if (filteredData.length === 0) {
-                    resultDiv.textContent = `No results found for "${name}".`;
+                if (currentFiltered.length === 0) {
+                    loading.style.display = 'none';
+                    resultDiv.innerHTML = `<p class="no-results">"${name}" के लिए कोई परिणाम नहीं मिला।</p>`;
+                    resultDiv.style.display = 'block';
                 } else {
-                    // Create a table to display the results
-                    const table = document.createElement('table');
-                    const thead = document.createElement('thead');
-                    const tbody = document.createElement('tbody');
-
-                    // Create table headers based on keys of the first object
-                    const headers = Object.keys(filteredData[0]);
-                    const headerRow = document.createElement('tr');
-                    headers.forEach(header => {
-                        const th = document.createElement('th');
-                        th.textContent = header;
-                        headerRow.appendChild(th);
-                    });
-                    thead.appendChild(headerRow);
-
-                    // Populate table rows with data
-                    filteredData.forEach(item => {
-                        const row = document.createElement('tr');
-                        headers.forEach(header => {
-                            const td = document.createElement('td');
-                            td.textContent = item[header]; // Populate cell with the value
-                            row.appendChild(td);
-                        });
-                        tbody.appendChild(row);
-                    });
-
-                    table.appendChild(thead);
-                    table.appendChild(tbody);
-                    resultDiv.appendChild(table); // Append the table to the result div
+                    displayResults(currentFiltered);
+                    thankYou.querySelector("#donorName").textContent = name;
+                    thankYou.style.display = 'block';
                 }
-
-                resultDiv.style.display = 'block'; // Show the result div
             } catch (error) {
-                resultDiv.textContent = `Error: ${error.message}`;
-                resultDiv.style.display = 'block'; // Show the error message
+                resultDiv.innerHTML = `<p class="no-results">त्रुटि: ${error.message}</p>`;
+                resultDiv.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
             }
+        }
 
-            // Clear only the input field after submission
-            document.querySelector('input[name="name"]').value = '';
+        function displayResults(data) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = '';
+
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            const headers = Object.keys(data[0]);
+            const headerRow = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header.charAt(0).toUpperCase() + header.slice(1);
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = item[header];
+                    row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            resultDiv.appendChild(table);
+
+            const downloadBtn = document.createElement('button');
+            downloadBtn.textContent = "परिणाम डाउनलोड करें";
+            downloadBtn.classList.add("download-btn");
+            downloadBtn.onclick = () => downloadCSV(data, headers);
+            resultDiv.appendChild(downloadBtn);
+
+            resultDiv.style.display = 'block';
+        }
+
+        function downloadCSV(data, headers) {
+            const csv = Papa.unparse({ fields: headers, data: data });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'donation_results.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleAutocomplete(event) {
+            const name = event.target.value.trim().toLowerCase();
+            if (!name || allData.length === 0) return;
+
+            const suggestions = allData
+                .filter(row => row.name.toLowerCase().includes(name))
+                .slice(0, 5)
+                .map(row => row.name);
+
+            let datalist = document.getElementById("nameSuggestions");
+            if (!datalist) {
+                datalist = document.createElement("datalist");
+                datalist.id = "nameSuggestions";
+                document.body.appendChild(datalist);
+                event.target.setAttribute("list", "nameSuggestions");
+            }
+            datalist.innerHTML = '';
+            suggestions.forEach(name => {
+                const option = document.createElement("option");
+                option.value = name;
+                datalist.appendChild(option);
+            });
         }
     </script>
 </head>
 <body>
-    <!-- Replace the header with an image -->
-    <img src="images/image.jpeg" alt="Search Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="videos/donation.mp4" type="video/mp4" />
+        <source src="videos/donation.webm" type="video/webm" />
+        <source src="videos/donation.ogv" type="video/ogg" />
+        आपका ब्राउज़र वीडियो टैग का समर्थन नहीं करता।
+    </video>
+    <div class="overlay"></div>
 
-    <form id="searchForm" onsubmit="handleSearch(event)">
-        <select name="inputType" required>
-            <option value="" disabled selected>Select Type</option>
-            <option value="bazaar">Bazaar Chanda</option> 
-            <option value="office">Office Chanda</option> 
-            <option value="gramin">Gramin Chanda</option>
-            <option value="patna">Patna Chanda</option>
-            <option value="navyuvak" selected>Navyuvak Chanda</option>
-        </select>
+    <div class="container">
+        <div class="header">
+            <h1>दुर्गा पूजा समिति सरमेरा</h1>
+            <span>(स्थापित: 1937)</span>
+            <p>पिछले वर्ष आपके द्वारा दिए गए योगदान के लिए धन्यवाद! नीचे अपना नाम दर्ज करें और दान का विवरण देखें।</p>
+        </div>
 
-        <!-- Input box for name -->
-        <input type="text" name="name" placeholder="Enter name" required>
-        <button type="submit">Search</button>
-    </form>
-    
-    <!-- Area to display search results -->
-    <div id="result"></div>
-    
+        <form id="searchForm" onsubmit="handleSearch(event)">
+            <select name="inputType" required>
+                <option value="" disabled selected>चंदा का प्रकार चुनें</option>
+                <option value="bazaar">बाज़ार चंदा</option>
+                <option value="office">ऑफिस चंदा</option>
+                <option value="gramin">ग्रामीण चंदा</option>
+                <option value="patna">पटना चंदा</option>
+                <option value="navyuvak" selected>नवयुवक चंदा</option>
+            </select>
+            <input type="text" name="name" placeholder="अपना नाम दर्ज करें" required />
+            <button type="submit">खोजें</button>
+        </form>
+
+        <div class="loading">डेटा लोड हो रहा है...</div>
+
+        <div class="thank-you-message">
+            धन्यवाद, <span id="donorName"></span>, आपके समर्थन के लिए!
+        </div>
+
+        <div id="result"></div>
+    </div>
 </body>
 </html>
