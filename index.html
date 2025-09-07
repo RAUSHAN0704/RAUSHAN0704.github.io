@@ -69,6 +69,7 @@
             -webkit-text-fill-color: transparent;
             animation: glow 2s infinite alternate;
             margin: 0;
+            cursor: pointer;
         }
 
         @keyframes glow {
@@ -192,6 +193,15 @@
         .download-btn:hover {
             background-color: #218838;
         }
+
+        .start-over-btn {
+            margin-top: 10px;
+            background-color: #00bcd4;
+        }
+
+        .start-over-btn:hover {
+            background-color: #0097a7;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
@@ -212,6 +222,7 @@
             const thankYou = document.querySelector(".thank-you-message");
             const loading = document.querySelector(".loading");
 
+            // Hide previous results
             resultDiv.style.display = 'none';
             thankYou.style.display = 'none';
             loading.style.display = 'block';
@@ -326,6 +337,18 @@
                 datalist.appendChild(option);
             });
         }
+
+        function resetSearch() {
+            document.querySelector('input[name="name"]').value = '';
+            document.getElementById("result").style.display = 'none';
+            document.querySelector(".thank-you-message").style.display = 'none';
+        }
+
+        function resetAll() {
+            document.getElementById("searchForm").reset();
+            document.getElementById("result").style.display = 'none';
+            document.querySelector(".thank-you-message").style.display = 'none';
+        }
     </script>
 </head>
 <body>
@@ -339,13 +362,13 @@
 
     <div class="container">
         <div class="header">
-            <h1>Durga Puja Samiti Sarmera</h1>
+            <h1 onclick="resetAll()">Durga Puja Samiti Sarmera</h1>
             <span>(ESTD. 1937)</span>
             <p>Thank you for your generous contributions last year! Search below to view your donation details.</p>
         </div>
 
         <form id="searchForm" onsubmit="handleSearch(event)">
-            <select name="inputType" required>
+            <select name="inputType" required onchange="resetSearch()">
                 <option value="" disabled selected>Select Type</option>
                 <option value="bazaar">Bazaar Chanda</option>
                 <option value="office">Office Chanda</option>
@@ -355,6 +378,7 @@
             </select>
             <input type="text" name="name" placeholder="Enter name" required />
             <button type="submit">Search</button>
+            <button type="button" class="start-over-btn" onclick="resetAll()">Start Over</button>
         </form>
 
         <div class="loading">Loading data...</div>
