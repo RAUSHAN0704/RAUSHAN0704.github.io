@@ -1,93 +1,131 @@
-﻿name,Amount(2023),Status
-Pramod Kumar,1000,Paid
-Sunil Kumar Singh,501,Paid
-Uttam Paswan,751,Paid
-Ramakant Jee,751,Paid
-Dr Archana Gupta,1100,Paid
-Mukesh Kumar,500,Paid
-Sweta Sinha,501,Paid
-Om Prakash Jha,501,Paid
-Md Daud Ahmed,500,Paid
-Abhishek Anand,505,Paid
-Durgesh Nandan,505,Paid
-JE Sarmera,5100,Paid
-ashok kr,2500,Paid
-girls school all teachers,7500,Paid
-deelip kr,1500,Paid
-krishnanandan kr,2000,Paid
-seema kr,1000,Paid
-seema kr,751,Paid
-sindhu kr,1000,Paid
-kr indu sinha,1000,Paid
-ajay kr,1250,Paid
-nujzarat praveen,1000,Paid
-shashibhushan,1000,Paid
-punam sinha,1000,Paid
-seema kr,751,Paid
-devendra sir,1000,Paid
-Runa Kumari,1000,Paid
-Nitu Kumari,501,Paid
-Punam Kumari,1000,Paid
-Seema Kumari,2100,Paid
-Kumari Juhi Singh,2500,Paid
-Ashutosh Kumar,500,Paid
-Kumari Veena Jee,2100,Paid
-shivnandan pd singh,2100,Paid
-sumeet kr raj,1100,Paid
-Amul Kumar,251,Paid
-Patel Purushottam,251,Paid
-BO Saheb (Agriculture),2100,Paid
-CDPO,2500,Paid
-Sanket Kumar Chandan,2500,Paid
-BDO,2500,Paid
-Rahul Ranjan (Surveyer),2500,Paid
-Sandeep Kumar,2500,Paid
-Nalanda CoOperative Bank,500,Paid
-Vetenary ,1000,Paid
-Ananya Shree (BDO),1000,Paid
-KYP,1100,Paid
-Vijay Dealer,5100,Paid
-Jeevika,700,Paid
-Jay Singh,500,Paid
-Rajeev Kumar,500,Paid
-Deepak Kumar,201,Paid
-Awadh Kishore Sinha,1100,Paid
-Manish Kumar,501,Paid
-Vikash Kumar Bittu,251,Paid
-Sushma Kumari,51,Paid
-Sushma Kumari,100,Paid
-Abhay Kumar,251,Paid
-Dileep Kumar,251,Paid
-Jyoti Kumari,251,Paid
-Sunita Kumari,251,Paid
-GNM All Member,2500,Paid
-Lalit Anand,251,Paid
-Kiran Sinha,201,Paid
-Sanjay Kumar,251,Paid
-Sweta Suman ,251,Paid
-Dr Sudheer,1100,Paid
-Akshay Kumar,251,Paid
-Awdesh Kumar,201,Paid
-Prabhat Kumar,200,Paid
-Mausam Kumari,251,Paid
-Umesh Kumar,251,Paid
-Canara Bank,3000,Paid
-Gramin Bank,1100,Paid
-Aadhar Centre,500,Paid
-Gunjan Nayagarh,2500,Paid
-Ramkrishna Vidyalay (Gopi),2500,Paid
-Sudama Kumar,101,Paid
-Pankaj Kumar Head Clerk,2100,Paid
-MNREGA,11000,Paid
-Anup Roy,1000,Paid
-Dr Harsh,1500,Paid
-Sintu Mukhiya,2100,Paid
-Bablu Mahto,1500,Paid
-Ashok Singh,5100,Paid
-Balmiki Manjhi,500,Paid
-Karu Singh,1100,Paid
-PuruShottam Chaudhary,2500,Paid
-Sankhiki Block,1100,Paid
-Sonu Cheron,1100,Paid
-Sunny,1100,Paid
-BEO (Prakhand Siksha),2500,Paid
+﻿name,Amount (2024),Status
+Parmod kumar,2500,PAID
+sunil kr sharma,750,PAID
+sadhna kumari,750,PAID
+shweta sinha,750,PAID
+deepti sinha,750,PAID
+dolly kumari,750,PAID
+arun kumar,750,PAID
+prashant jyoti,750,PAID
+shravan kumar,750,PAID
+pushpa kumari,750,PAID
+poonam kumari pandey,410,PAID
+ajit kumar,725,PAID
+soni kumari,750,PAID
+manish kumar,750,PAID
+kumar yadubhusan,750,PAID
+arvind kr chaudhary,750,PAID
+daud ali,750,PAID
+mayank kumar,750,PAID
+adhar center,750,PAID
+md asif anwar,1100,DUES
+falak naaj,1100,DUES
+kumari juhi sinha,1500,PAID
+Nujrat praveen,1501,DUES
+ajay kumar,1000,PAID
+kumari indu sinha,2000,DUES
+anil paswan,2500,PAID
+seema kumari,750,DUES
+sindhu kumari,1500,DUES
+devendra shaw,1100,PAID
+sashi bhusan prasad,1100,PAID
+poonam sinha,1100,PAID
+md abbulais,1100,DUES
+dilip kumar,1500,PAID
+All teachers,15000,PAID
+Principal,2500,DUES
+Runa kumari,2100,PAID
+Poonam kumari,1100,PAID
+sudama kumar,251,PAID
+akshay kumar,301,PAID
+praveen kumar,251,PAID
+sushma prem lata,411,PAID
+kiran kumari,251,DUES
+sunil ji,201,PAID
+amar kumar,251,DUES
+prabhat kumar,251,DUES
+fatima,101,PAID
+jayveer kumar,101,PAID
+jacky kumar,151,PAID
+jnm all memeber,2100,PAID
+govind jaisurya,201,PAID
+dr sanjay kumar,500,DUES
+sudhanshu sekhar,101,PAID
+deepak kumar,151,PAID
+manish kumar,601,PAID
+vikash kr vibhu,501,PAID
+Shweta Suman,251,DUES
+Awdhesh,200,PAID
+Umesh Kumar,100,PAID
+sanjay kumar,401,PAID
+pankaj kr (bada babu),2500,DUES
+abhay kumar,201,PAID
+ambulance,200,PAID
+Shiv kumar ji,200,PAID
+dilip kumar,201,PAID
+sanjay kumar,501,DUES
+ravindra kumar,501,DUES
+vidya kumari,501,DUES
+dr kumud ranjan,1501,DUES
+Dr. Harsh,1501,PAID
+sunny kumar,12500,PAID
+mnrega,11000,PAID
+shivshankar das,2500,DUES
+bhanu master (bela),501,DUES
+radheshyam ji (bada babu),1100,DUES
+rituraj ji,500,PAID
+govind pd singh,500,PAID
+khushi jeevika,500,PAID
+vijay dealer,5100,PAID
+jeevika,551,PAID
+manager cooperative bank,1100,PAID
+kyp center,2100,PAID
+cdpo,2500,PAID
+panchayat raj padhadhikari,1100,DUES
+panchayat sahayak,2000,DUES
+bco saheb,1100,DUES
+bco operator,500,DUES
+karyapalak padadhikari,1100,PAID
+abhishek ji,500,DUES
+vinit ji,500,DUES
+dilip kumar beo,2500,PAID
+sneha kumari,1100,PAID
+mo sarmera,1500,DUES
+prahlad kr teacher,1100,PAID
+anuj kumar,200,PAID
+pradeep yadav,501,PAID
+santosh kumar,500,PAID
+sashi ji anchal,500,PAID
+sashi kumar,250,PAID
+jpg,300,PAID
+sujeet kumar,250,PAID
+sarvind kumar,1000,PAID
+dr. rajesh vetenary,1000,PAID
+patel purshotam,251,DUES
+sanket kumar pramukh,2500,PAID
+rakesh kumar nirvachan,1100,DUES
+purushottam chaudhary,0,DUES
+rahul kumar,1100,DUES
+samina khatun co,2100,DUES
+Principal urdu school,2000,PAID
+bdo ,2100,DUES
+Sanjay Bharati,1100,DUES
+manoj kumar,301,PAID
+musharaf ,151,PAID
+gramin bank,500,PAID
+manager pnb,2500,PAID
+alok kumar pnb,500,PAID
+sailendra viswas pnb,500,PAID
+sumit pnb,200,PAID
+usha ji pnb,501,PAID
+Khushabu kumari amin,101,PAID
+viswa mohan pnb,251,PAID
+sandeep pnb,500,PAID
+ajay ji pnb,500,PAID
+manager canara,2500,PAID
+om ji canara,751,PAID
+santosh ji canara,501,PAID
+ravi kumar canara,551,PAID
+Kumari madhu amin,151,PAID
+MUSKAN HOSPITAL,200,PAID
+ASHOK SINGH,5100,PAID

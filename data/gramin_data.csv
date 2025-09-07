@@ -1,101 +1,94 @@
-﻿name,Amount (2023),Status
-Ajay Kishore Pd Singh,0,Dues
-Sanjay Kishore Pd Singh,2000,Paid
-Shyam Kishore Pd Sigh,0,Dues
-Lalji Babu,500,Paid
-Rajesh Pd Singh( Rajan),600,Paid
-Sarvsh Kr (Chunnu),500,Paid
-Niranjan Kumar Baua,1000,Paid
-Rajanandan Pd Shahi,500,Paid
-Janrdan Pd Shahi,0,Dues
-Sikendra Pd Shahi,351,Paid
-Mukesh Shahi,500,Paid
-Nageshwar Pd Singh,655,Paid
-Rajaram Pd Singh,705,Paid
-Gopal Bhardwaj,500,Paid
-Viresh Bhardwaj,500,Paid
-Manoj Pd Singh,1000,Paid
-Nand Kishore Pd Singh,600,Paid
-Jay Kishore Pd Singh,605,Paid
-Ashok Kr Sinha,501,Paid
-Radheshyam Vidyarthi,810,Paid
-Kanchan Kumar Guddu,505,Paid
-Raushan Kumar Minku,501,Paid
-Sanjeev Kr Chunnu,500,Paid
-Sant Ajit Das,351,Paid
-Suresh Pd Singh,351,Paid
-Mrinal Kumar,350,Paid
-Ajay Kishore Pd Singh,500,Paid
-Abhay Kishore Pd Singh,500,Paid
-Rajesh Kumar Babalu,500,Paid
-Raushan Kr Army,500,Paid
-Ramsewak Pd Singh,1000,Paid
-Anil Kr Singh,500,Paid
-Sunil Kr Singh,505,Paid
-Kamal Nayan Pd Singh,0,Dues
-Niranjan Kr Munna,501,Paid
-Sanjay Kr,500,Paid
-Munna Kr,351,Paid
-Ramsewak Pd Singh (Lalan Babu),655,Paid
-Amarjeet Kr,400,Paid
-Rajiv Kr Pappu,351,Paid
-Shatrudhn Pd Singh,1105,Paid
-Ramesh Pd Singh,605,Paid
-Krishn Kr Ranjan,0,Dues
-Vimal Kishore,650,Paid
-Kamal Kishore,501,Paid
-Rajeshwari Pd Singh,1100,Paid
-Druvnandan Pd Singh,0,Dues
-Ravindra Pd Singh,701,Paid
-Prem Ranjan Santu,1101,Paid
-Nagendra Pd Singh (Nagendra Cha),350,Paid
-Chamcham Kr,202,Paid
-Dhiraj Kumar,351,Paid
-Anil Prasad Pappu,500,Paid
-Pappu Pd Singh,500,Paid
-Dilip Pd Singh,501,Paid
-Shivshankar Pd Singh,505,Paid
-Purushottam Kr Mannu,350,Paid
-Rajeshwari Pd Singh (Mukku),1000,Paid
-Vijay Narayan Pd Singh,901,Paid
-Shatrudhn Pd,351,Paid
-Madho Babu,500,Paid
-Shivji Singh,501,Paid
-Arun Kr,350,Paid
-Mantu Kr,400,Paid
-Ghantu Kr,400,Paid
-Sachchidanand Pd Singh,1605,Paid
-Gopal Pd Singh,501,Paid
-Late Tripit Narayan,1100,Paid
-Yogendra Pd Singh,1100,Paid
-Abhyuday Pd Singh,1501,Paid
-Vinay Pd Singh,425,Paid
-Shivdani Babu,1150,Paid
-Ramshankar Pd Singh,1100,Paid
-Umesh Pd Singh,200,Paid
-Madan Pd Singh,500,Paid
-Kanhaiya Pd Singh,400,Paid
-Rajan Kumar,501,Paid
-Nagendra Pd Singh,501,Paid
-Shailendra Pd Singh,751,Paid
-Brajesh Kr Tantan,505,Paid
-Nanha Babu,500,Paid
-Kailash Pd Singh,800,Paid
-Deeepak Kr,502,Paid
-Shankar Pd Singh,500,Paid
-Naveen Pd Singh,0,Dues
-Manohar Pd Singh,500,Paid
-Pramod Pd Singh,500,Paid
-Damodar Pd Singh,505,Paid
-Awadhsh Pd Singh,501,Paid
-Nirbhay Kr,365,Paid
-Kaushan Kr Kosho,500,Paid
-Santosh Krmar Pato,0,Dues
-Murari Pd Singh,0,Dues
-Nandkishore Pd Singh Barh,501,Paid
-Ghee (Vidyapati),3600,Paid
-Rajniti Pd Singh,0,Dues
-Pramod Pd Singh,1100,Paid
-Savita Singh,2500,Paid
-Samarjeet Kumar,350,Paid
-Abhimanyu Kumar (Sonu),351,Paid
+﻿name,Amount (2024),Status
+Ajay kishore pd singh,0,
+sanjay kishore pd singh,0,
+shyam kishore pd singh,0,
+lalji babu,2000,PAID
+rajesh singh (rajan),600,PAID
+sarvesh kumar (chunnu),500,PAID
+mukesh shahi,1100,PAID
+sikander shahi,350,PAID
+nageshwar pd singh,650,PAID
+rajniti pd singh,2100,PAID
+rajaram pd singh,1410,PAID
+ niranjan prasad (bauaa),1000,PAID
+gopal bhardwaj,500,PAID
+viresh bhardwaj,500,PAID
+manoj pd singh,1000,PAID
+nandkishore pd singh,600,PAID
+jaykishore pd singh,605,PAID
+radheshyam pd vidyarthi,801,PAID
+kanchan kumar,505,PAID
+ashok kumar sinha,501,PAID
+raushan kumar (minku),501,PAID
+sant ajeet das,351,PAID
+ramshevak pd singh,1000,PAID
+rajnandan pd shahi,500,PAID
+rajesh kumar (bablu),550,PAID
+abhay kishore,500,PAID
+Ajay kishore pd singh,500,PAID
+satrudhan pd singh,1115,PAID
+vimal kishore,650,PAID
+ramesh pd singh,605,PAID
+sanjeev kumar (dablu),700,PAID
+samarjeet pd singh,351,PAID
+amarjeet pd singh,400,PAID
+rajeev kumar (pappu),351,PAID
+rajeshwari pd singh,1100,PAID
+kamal kishore,500,PAID
+ravindra pd singh,700,PAID
+niranjan pd singh (munna),500,PAID
+sunil pd singh,500,PAID
+sanjay pd singh,500,PAID
+anil pd singh,500,PAID
+kaushlendra pd singh,600,PAID
+munna kumar,350,PAID
+ramshankar pd singh,1100,PAID
+kamalnayan pd singh,0,
+mrinal kumar,350,PAID
+nirbhay kumar,365,PAID
+vinod kumar,1500,PAID
+prabhakar kumar (raushan),500,PAID
+shivdani pd singh,1150,PAID
+umesh pd singh,200,PAID
+vinay pd singh,425,PAID
+kumar saurabh,1100,PAID
+rajan kumar,501,PAID
+brajesh kumar,502,PAID
+nagendra pd singh (chunnu ji),501,PAID
+sailendra pd singh,751,PAID
+nanha pd singh,500,PAID
+kanhaiya pd singh,400,PAID
+madan pd singh,500,PAID
+kailash pd singh,800,PAID
+gopal shankar,500,PAID
+parmod pd singh,501,PAID
+manohar pd singh,500,PAID
+damodar pd singh,501,PAID
+shankar pd singh,500,PAID
+deepak kumar,502,PAID
+awdesh pd singh,505,PAID
+sachidanand pd singh,1605,PAID
+mantu babu,400,PAID
+arun kumar,351,PAID
+anirudh pd singh,400,PAID
+sujeet kumar,502,PAID
+naveen kumar,500,PAID
+shiv ji,500,PAID
+mannu ji,350,PAID
+satrudhan pd singh,350,PAID
+anil pd singh,500,PAID
+shivshankar pd singh,500,PAID
+sanjay prasad (pappu),500,PAID
+vijay narayan pd singh,901,PAID
+suresh pd singh,351,PAID
+dheeraj kumar,350,PAID
+chamcham kumar,500,PAID
+nagendra pd singh (mirchai da),350,PAID
+premranjan (santu),1100,PAID
+ nandkishore pd singh (badh),500,PAID
+murari pd singh (badh),500,PAID
+abhimanyu kumar (sonu),351,PAID
+savita singh,5000,PAID
+parmod pd singh (manjhaulia),1100,PAID
+dr sunil pd singh,1100,PAID
+Vidyapati Ghee,4200,PAID
