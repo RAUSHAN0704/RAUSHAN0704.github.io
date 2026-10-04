@@ -128,12 +128,6 @@
         .btn-primary { background: linear-gradient(90deg, var(--red), var(--saffron)); color:#fff; }
         .btn-primary:hover { filter: brightness(1.05); }
         .btn-ghost { background:#fff; color:var(--maroon); border:1.5px solid #e7cdb8; margin-top:10px; }
-        .btn-pay { background: linear-gradient(90deg, #1b7a3d, #2ea35a); color:#fff; font-size:17px; }
-        .btn-pay:hover { filter:brightness(1.05); }
-        .btn-phonepe { background: linear-gradient(90deg, #5f259f, #7b36c9); color:#fff; font-size:17px; }
-        .btn-phonepe:hover { filter:brightness(1.08); }
-        .btn-upi-alt { background:#fff; color:#5f259f; border:1.5px solid #d9c7ee; font-size:14px; margin-top:8px; }
-        .btn-upi-alt:hover { background:#f7f2fc; }
 
         .loading { text-align:center; color:var(--muted); font-style:italic; margin-top:12px; display:none; }
 
@@ -177,8 +171,6 @@
         .copy-upi { background:var(--maroon); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:14px; font-weight:700; cursor:pointer; }
         .copy-upi:active { filter:brightness(1.1); }
         .upi-copy-hint { font-size:12px; color:var(--muted); margin:6px 2px 14px; line-height:1.5; }
-        .pay-note { font-size:12.5px; color:#8a5a1a; background:#fff7ea; border:1px solid #eadbc8; border-radius:10px; padding:8px 11px; margin:10px 0 0; line-height:1.5; text-align:center; }
-        .pay-note b { color:var(--maroon); }
         .assure { font-size:13px; background:#fff7ea; border:1px dashed #e7c89f; border-radius:10px; padding:9px 12px; color:var(--maroon); font-weight:600; margin:12px 0; }
 
         .bank { text-align:left; background:#fffdf9; border:1px solid #eadbc8; border-radius:12px; padding:12px 14px; margin-top:12px; font-size:14px; }
@@ -256,9 +248,6 @@
                 <button class="copy-upi" onclick="copyText('pnbsarmera@ybl')">UPI ID कॉपी करें</button>
             </div>
             <p class="upi-copy-hint">UPI ID कॉपी करके अपने PhonePe/GPay में "Pay to UPI ID / Send to UPI ID" में पेस्ट करें।</p>
-
-            <a id="payBtn" class="btn btn-phonepe" href="#" onclick="return openPay('phonepe')">PhonePe खोलें 📲</a>
-            <p class="pay-note">⚠️ अगर PhonePe "security reason" की वजह से रोक दे, तो ऊपर दिया <b>QR स्कैन करें</b> — उससे भुगतान हमेशा होगा।</p>
 
             <div class="assure">✅ आपका भुगतान सीधे <b>दुर्गा पूजा समिति सरमेरा</b> के खाते में जाएगा।</div>
 
@@ -371,25 +360,6 @@
             html += '</div>';
             resultDiv.innerHTML = html;
         }
-
-        function upiParams(amount) {
-            let p = `pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE)}&cu=INR`;
-            if (amount && amount > 0) p += `&am=${amount}`;
-            p += `&tn=${encodeURIComponent('Durga Puja Chanda 2026')}`;
-            return p;
-        }
-        function buildUpiUrl(amount) { return `upi://pay?${upiParams(amount)}`; }
-        function buildPhonePeUrl(amount) { return `phonepe://pay?${upiParams(amount)}`; }
-
-        function openPay(scheme, amount) {
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if (!isMobile) { showToast('कृपया मोबाइल पर खोलें या QR स्कैन करें 📱'); return false; }
-            const url = scheme === 'phonepe' ? buildPhonePeUrl(amount || 0) : buildUpiUrl(amount || 0);
-            window.location.href = url;
-            return false;
-        }
-        // kept for backward compat
-        function payNow(amount) { return openPay('upi', amount); }
 
         function copyText(t) {
             navigator.clipboard?.writeText(t).then(() => showToast('कॉपी हो गया ✓')).catch(() => showToast(t));
