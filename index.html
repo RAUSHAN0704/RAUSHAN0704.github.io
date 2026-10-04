@@ -1,393 +1,396 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Durga Puja Samiti Sarmera - Donor Search</title>
-    <meta name="description" content="Search and view last year's donation details by name at Durga Puja Samiti Sarmera. Thank you for supporting the community!"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>दुर्गा पूजा समिति सरमेरा — योगदान 2026</title>
+    <meta name="description" content="दुर्गा पूजा समिति सरमेरा (स्थापना 1937)। अपना नाम खोजें, पिछले वर्ष का योगदान देखें और इस वर्ष का चंदा UPI से दें। जय माँ दुर्गा!" />
+
+    <!-- WhatsApp / social link preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="दुर्गा पूजा समिति सरमेरा — योगदान 2026 🙏" />
+    <meta property="og:description" content="अपना नाम खोजें, पिछले वर्ष का योगदान देखें और इस वर्ष का चंदा UPI से दें। जय माँ दुर्गा!" />
+    <meta property="og:image" content="https://durgapujachanda.store/images/preview.jpg" />
+    <meta property="og:url" content="https://durgapujachanda.store/" />
+    <meta name="theme-color" content="#b3002d" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            background-color: #121212;
-            color: #ddd;
+        :root {
+            --maroon: #8a0025;
+            --red: #b3002d;
+            --saffron: #ff8f1f;
+            --gold: #f4c430;
+            --cream: #fff7ea;
+            --ink: #3a1206;
+            --card: #ffffff;
+            --muted: #7a5a4a;
+            --green: #1b7a3d;
         }
 
-        .video-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            z-index: 0;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.3);
-            z-index: 1;
-        }
+        html, body { margin: 0; padding: 0; }
 
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Baloo 2', 'Tiro Devanagari Hindi', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 15% 0%, rgba(255,143,31,0.25), transparent 40%),
+                radial-gradient(circle at 85% 10%, rgba(244,196,48,0.25), transparent 40%),
+                linear-gradient(160deg, #fff7ea 0%, #ffe9cf 55%, #ffdcc0 100%);
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            background: rgba(30, 30, 30, 0.85);
-            padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            color: #ddd;
-        }
-
-        .header {
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ff6b6b, #f8e71c, #4caf50, #00bcd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s infinite alternate;
-            margin: 0;
-            cursor: pointer;
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 5px #ff6b6b, 0 0 10px #f8e71c, 0 0 20px #4caf50;
-            }
-            to {
-                text-shadow: 0 0 10px #00bcd4, 0 0 20px #4caf50, 0 0 30px #f8e71c;
-            }
-        }
-
-        .header span {
-            display: block;
-            font-size: 14px;
-            color: #bbb;
-            margin-top: 4px;
-        }
-
-        .header p {
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: #ccc;
-        }
-
-        form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            align-items: center;
+            padding: 16px 14px 36px;
         }
 
-        select, input {
-            padding: 12px 15px;
-            border: 1px solid #555;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: #222;
-            color: #ddd;
-            transition: border-color 0.3s, box-shadow 0.3s;
+        .wrap { width: 100%; max-width: 460px; }
+
+        /* ---------- Header ---------- */
+        .topbar {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .logo {
+            width: min(46vw, 180px);
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            filter: drop-shadow(0 6px 14px rgba(138,0,37,0.25));
+        }
+        .tagline {
+            font-size: 15px;
+            color: var(--muted);
+            margin: 12px 4px 0;
+            line-height: 1.5;
+        }
+        .tagline b { color: var(--maroon); }
+
+        /* ---------- Card ---------- */
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(138,0,37,0.14);
+            border: 1px solid rgba(138,0,37,0.08);
+            padding: 18px 16px;
+            margin-top: 16px;
+        }
+        .card h2 {
+            margin: 0 0 12px;
+            font-size: 17px;
+            color: var(--maroon);
+            text-align: center;
         }
 
+        label { display:block; font-size:13px; font-weight:700; color:var(--muted); margin:0 0 5px 2px; }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1.5px solid #e7cdb8;
+            border-radius: 12px;
+            font-size: 16px; /* >=16px prevents iOS zoom */
+            font-family: inherit;
+            background: #fffdf9;
+            color: var(--ink);
+            margin-bottom: 14px;
+            transition: border-color .2s, box-shadow .2s;
+        }
         select:focus, input:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 5px rgba(255,107,107,0.7);
+            border-color: var(--saffron);
+            box-shadow: 0 0 0 3px rgba(255,143,31,0.2);
             outline: none;
         }
 
-        button {
-            background-color: #ff6b6b;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        button:hover {
-            background-color: #ff3b3b;
-            transform: translateY(-2px);
-        }
-
-        #result {
-            margin-top: 25px;
-            background-color: rgba(30,30,30,0.9);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        table {
+        .btn {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform .12s, filter .2s;
         }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: linear-gradient(90deg, var(--red), var(--saffron)); color:#fff; }
+        .btn-primary:hover { filter: brightness(1.05); }
+        .btn-ghost { background:#fff; color:var(--maroon); border:1.5px solid #e7cdb8; margin-top:10px; }
+        .btn-pay { background: linear-gradient(90deg, #1b7a3d, #2ea35a); color:#fff; font-size:17px; }
+        .btn-pay:hover { filter:brightness(1.05); }
 
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #555;
-        }
+        .loading { text-align:center; color:var(--muted); font-style:italic; margin-top:12px; display:none; }
 
-        th {
-            background-color: #333;
-            text-align: left;
-        }
+        /* ---------- Result ---------- */
+        #result { margin-top: 16px; display: none; }
 
-        tr:nth-child(even) {
-            background-color: #2a2a2a;
+        .donor {
+            background: linear-gradient(160deg, #fff 0%, #fff6ec 100%);
+            border: 1.5px solid #f0d9bf;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 18px rgba(138,0,37,0.08);
         }
+        .donor .dname { font-size:18px; font-weight:800; color:var(--maroon); margin:0 0 10px; }
+        .donor .row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px dashed #eadbc8; }
+        .donor .row:first-of-type { border-top:none; }
+        .donor .k { font-size:14px; color:var(--muted); font-weight:600; }
+        .donor .v { font-size:16px; font-weight:800; color:var(--ink); }
+        .donor .amt { color:var(--green); font-size:20px; }
+        .donor .amt2 { color:var(--muted); font-size:17px; }
+        .pill { font-size:12px; font-weight:800; padding:3px 10px; border-radius:999px; }
+        .pill.paid { background:#e3f6e9; color:var(--green); }
+        .pill.due { background:#fdeaea; color:#c0392b; }
 
-        .no-results {
-            font-style: italic;
-            color: #aaa;
-        }
+        .pay-prompt { font-size:14px; color:var(--muted); text-align:center; margin:4px 0 10px; line-height:1.5; }
+        .pay-prompt b { color:var(--maroon); }
 
-        .thank-you-message {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: #2e7d32;
-            color: #e8f5e9;
-            border: 1px solid #1b5e20;
-            border-radius: 8px;
-            display: none;
-            transition: background-color 0.3s, color 0.3s;
-        }
+        .no-results { text-align:center; color:#b5651d; font-style:italic; padding:10px; }
 
-        .loading {
-            margin-top: 20px;
-            display: none;
-            font-style: italic;
-        }
+        /* ---------- Payment section ---------- */
+        .pay-card { text-align:center; }
+        .pay-card h2 { margin-bottom: 6px; }
+        .qr-box { background:#fff; border:1px solid #eee; border-radius:14px; padding:12px; display:block; width:fit-content; max-width:100%; margin:10px auto 6px; box-shadow:0 4px 14px rgba(0,0,0,.08); }
+        .qr-box img { width:210px; height:210px; display:block; }
+        .scan-hint { font-size:13px; color:var(--muted); margin:2px 0 14px; }
+        .assure { font-size:13px; background:#fff7ea; border:1px dashed #e7c89f; border-radius:10px; padding:9px 12px; color:var(--maroon); font-weight:600; margin:12px 0; }
 
-        .download-btn {
-            margin-top: 10px;
-            background-color: #28a745;
-        }
+        .bank { text-align:left; background:#fffdf9; border:1px solid #eadbc8; border-radius:12px; padding:12px 14px; margin-top:12px; font-size:14px; }
+        .bank .brow { display:flex; justify-content:space-between; gap:10px; padding:4px 0; }
+        .bank .bk { color:var(--muted); font-weight:600; }
+        .bank .bv { font-weight:700; color:var(--ink); text-align:right; word-break:break-all; }
+        .copy { background:none; border:none; color:var(--red); font-weight:800; cursor:pointer; font-size:13px; padding:2px 6px; }
 
-        .download-btn:hover {
-            background-color: #218838;
-        }
+        details.bank-wrap { margin-top:12px; }
+        details.bank-wrap summary { cursor:pointer; color:var(--maroon); font-weight:700; font-size:14px; list-style:none; text-align:center; padding:8px; }
+        details.bank-wrap summary::-webkit-details-marker { display:none; }
 
-        .start-over-btn {
-            margin-top: 10px;
-            background-color: #00bcd4;
-        }
+        .footer { text-align:center; margin-top:22px; font-size:12px; color:var(--muted); line-height:1.6; }
+        .footer .jai { color:var(--maroon); font-weight:800; font-size:14px; }
 
-        .start-over-btn:hover {
-            background-color: #0097a7;
+        .toast {
+            position: fixed; left:50%; bottom:24px; transform:translateX(-50%);
+            background:var(--ink); color:#fff; padding:10px 18px; border-radius:999px;
+            font-size:14px; opacity:0; pointer-events:none; transition:opacity .25s; z-index:50;
         }
+        .toast.show { opacity:0.95; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const nameInput = document.querySelector('input[name="name"]');
-            nameInput.addEventListener("input", handleAutocomplete);
-        });
+</head>
+<body>
+    <div class="wrap">
+        <!-- Header -->
+        <div class="topbar">
+            <img src="images/logo.png" alt="दुर्गा पूजा समिति सरमेरा गढ़ — स्थापना 1937" class="logo" onclick="resetAll()" />
+            <p class="tagline">
+                आपके पिछले वर्ष के <b>स्नेह और सहयोग</b> के लिए हार्दिक धन्यवाद! 🙏<br />
+                नीचे अपना नाम खोजें और इस वर्ष माँ दुर्गा की सेवा में अपना योगदान दें।
+            </p>
+        </div>
 
+        <!-- Search -->
+        <div class="card">
+            <h2>🔎 अपना योगदान खोजें</h2>
+            <form id="searchForm" onsubmit="handleSearch(event)">
+                <label for="inputType">श्रेणी चुनें</label>
+                <select id="inputType" name="inputType" required onchange="resetSearch()">
+                    <option value="" disabled selected>— श्रेणी चुनें —</option>
+                    <option value="navyuvak" selected>नवयुवक चंदा (Navyuvak)</option>
+                    <option value="gramin">ग्रामीण चंदा (Gramin)</option>
+                    <option value="patna">पटना चंदा (Patna)</option>
+                </select>
+
+                <label for="nameInput">अपना नाम लिखें</label>
+                <input type="text" id="nameInput" name="name" placeholder="जैसे: Raushan Kumar" required list="nameSuggestions" autocomplete="off" />
+                <datalist id="nameSuggestions"></datalist>
+
+                <button type="submit" class="btn btn-primary">खोजें</button>
+                <button type="button" class="btn btn-ghost" onclick="resetAll()">नया खोजें</button>
+            </form>
+            <div class="loading" id="loading">डेटा लोड हो रहा है…</div>
+        </div>
+
+        <!-- Results injected here -->
+        <div id="result"></div>
+
+        <!-- Payment (always visible) -->
+        <div class="card pay-card">
+            <h2>💳 इस वर्ष का चंदा दें</h2>
+            <p class="pay-prompt">PhonePe / Google Pay / Paytm — किसी भी UPI ऐप से<br /><b>QR स्कैन करें</b> या नीचे का बटन दबाएँ।</p>
+
+            <a id="payBtn" class="btn btn-pay" href="#" onclick="return payNow()">UPI से भुगतान करें 📲</a>
+
+            <div class="qr-box">
+                <img src="images/upi-qr.png" alt="UPI QR — दुर्गा पूजा समिति सरमेरा" loading="lazy" />
+            </div>
+            <div class="scan-hint">UPI ID: <b>pnbsarmera@ybl</b></div>
+
+            <div class="assure">✅ आपका भुगतान सीधे <b>दुर्गा पूजा समिति सरमेरा</b> के खाते में जाएगा।</div>
+
+            <details class="bank-wrap">
+                <summary>🏦 बैंक खाते से भुगतान (क्लिक करें)</summary>
+                <div class="bank">
+                    <div class="brow"><span class="bk">खाता नाम</span><span class="bv">DURGA POOJA SAMATI SARMERA</span></div>
+                    <div class="brow"><span class="bk">खाता संख्या</span><span class="bv">3108000120185953 <button class="copy" onclick="copyText('3108000120185953')">कॉपी</button></span></div>
+                    <div class="brow"><span class="bk">IFSC</span><span class="bv">PUNB0310800 <button class="copy" onclick="copyText('PUNB0310800')">कॉपी</button></span></div>
+                    <div class="brow"><span class="bk">बैंक</span><span class="bv">Punjab National Bank</span></div>
+                </div>
+            </details>
+        </div>
+
+        <div class="footer">
+            <div class="jai">॥ जय माँ दुर्गा ॥</div>
+            दुर्गा पूजा समिति सरमेरा · सरमेरा गढ़, नालंदा, बिहार 811104<br />
+            स्थापना 1937
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const UPI_ID = "pnbsarmera@ybl";
+        const PAYEE   = "Durga Pooja Samiti Sarmera";
         let allData = [];
-        let currentFiltered = [];
+        let lastAmount = 0; // last searched donor's amount, used to prefill UPI
+
+        // normalize keys (strip BOM / spaces) so row.name & amount read reliably
+        function pick(row, candidates) {
+            const keys = Object.keys(row);
+            for (const want of candidates) {
+                const k = keys.find(k => k.replace(/\uFEFF/g, '').trim().toLowerCase() === want.toLowerCase());
+                if (k) return row[k];
+            }
+            return undefined;
+        }
+        const getName    = r => (pick(r, ['name']) || '').toString();
+        const getAmount  = r => (pick(r, ['Amount (2025)', 'Amount(2025)', 'amount']) || '0').toString().replace(/[^\d.]/g,'');
+        const getAmount24= r => { const v = pick(r, ['Amount (2024)', 'Amount(2024)']); return v === undefined ? null : v.toString().replace(/[^\d.]/g,''); };
+        const getStatus  = r => (pick(r, ['Status']) || '').toString().trim();
+
+        async function loadCategory(type) {
+            const res = await fetch(`data/${type}_data.csv`);
+            const txt = await res.text();
+            allData = Papa.parse(txt, { header: true, skipEmptyLines: true }).data
+                        .filter(r => getName(r).trim() !== '');
+            return allData;
+        }
 
         async function handleSearch(event) {
             event.preventDefault();
-
-            const name = document.querySelector('input[name="name"]').value.trim().toLowerCase();
-            const inputType = document.querySelector('select[name="inputType"]').value;
-            const resultDiv = document.getElementById("result");
-            const thankYou = document.querySelector(".thank-you-message");
-            const loading = document.querySelector(".loading");
-
-            // Hide previous results
+            const name = document.getElementById('nameInput').value.trim().toLowerCase();
+            const type = document.getElementById('inputType').value;
+            const resultDiv = document.getElementById('result');
+            const loading = document.getElementById('loading');
             resultDiv.style.display = 'none';
-            thankYou.style.display = 'none';
+            resultDiv.innerHTML = '';
+
+            if (!name) { showToast('कृपया नाम लिखें'); return; }
+
             loading.style.display = 'block';
-            resultDiv.innerHTML = '';
-
-            if (!name) {
-                loading.style.display = 'none';
-                resultDiv.innerHTML = '<p class="no-results">Please enter a name to search.</p>';
-                resultDiv.style.display = 'block';
-                return;
-            }
-
             try {
-                const response = await fetch(`data/${inputType}_data.csv`);
-                const csvText = await response.text();
-
-                allData = Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true
-                }).data;
-
-                currentFiltered = allData.filter(row => row.name.toLowerCase().includes(name));
-
-                if (currentFiltered.length === 0) {
-                    loading.style.display = 'none';
-                    resultDiv.innerHTML = `<p class="no-results">No results found for "${name}".</p>`;
-                    resultDiv.style.display = 'block';
-                } else {
-                    displayResults(currentFiltered);
-                    thankYou.querySelector("#donorName").textContent = name;
-                    thankYou.style.display = 'block';
+                if (!allData.length || allData.__type !== type) {
+                    await loadCategory(type);
+                    allData.__type = type;
                 }
-            } catch (error) {
-                resultDiv.innerHTML = `<p class="no-results">Error: ${error.message}</p>`;
-                resultDiv.style.display = 'block';
-            } finally {
+                const matches = allData.filter(r => getName(r).toLowerCase().includes(name));
                 loading.style.display = 'none';
+                if (!matches.length) {
+                    resultDiv.innerHTML = `<div class="card"><p class="no-results">"${escapeHtml(name)}" नाम से कोई रिकॉर्ड नहीं मिला।<br/>कृपया वर्तनी जाँचें या दूसरी श्रेणी चुनें। 🙏</p></div>`;
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                renderDonors(matches);
+                resultDiv.style.display = 'block';
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (e) {
+                loading.style.display = 'none';
+                resultDiv.innerHTML = `<div class="card"><p class="no-results">त्रुटि: ${escapeHtml(e.message)}</p></div>`;
+                resultDiv.style.display = 'block';
             }
         }
 
-        function displayResults(data) {
-            const resultDiv = document.getElementById("result");
-            resultDiv.innerHTML = '';
+        function renderDonors(rows) {
+            const resultDiv = document.getElementById('result');
+            const first = rows[0];
+            lastAmount = parseFloat(getAmount(first)) || 0;
 
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-
-            const headers = Object.keys(data[0]);
-            const headerRow = document.createElement('tr');
-            headers.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header.charAt(0).toUpperCase() + header.slice(1);
-                headerRow.appendChild(th);
+            let html = '<div class="card">';
+            html += `<h2>🙏 आपका पिछले वर्ष का योगदान</h2>`;
+            rows.forEach(r => {
+                const amt = parseFloat(getAmount(r)) || 0;
+                const amt24raw = getAmount24(r);
+                const has24 = amt24raw !== null;
+                const amt24 = parseFloat(amt24raw) || 0;
+                const status = getStatus(r).toLowerCase();
+                const paid = status === 'paid';
+                const row2024 = has24
+                    ? `<div class="row"><span class="k">वर्ष 2024 का योगदान</span><span class="v amt2">₹ ${amt24.toLocaleString('en-IN')}</span></div>`
+                    : '';
+                html += `
+                    <div class="donor">
+                        <p class="dname">${escapeHtml(getName(r))}</p>
+                        ${row2024}
+                        <div class="row"><span class="k">वर्ष 2025 का योगदान</span><span class="v amt">₹ ${amt.toLocaleString('en-IN')}</span></div>
+                        <div class="row"><span class="k">स्थिति (2025)</span><span>${paid ? '<span class="pill paid">✓ प्राप्त</span>' : '<span class="pill due">बकाया</span>'}</span></div>
+                    </div>`;
             });
-            thead.appendChild(headerRow);
-
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                headers.forEach(header => {
-                    const td = document.createElement('td');
-                    td.textContent = item[header];
-                    row.appendChild(td);
-                });
-                tbody.appendChild(row);
-            });
-
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            resultDiv.appendChild(table);
-
-            const downloadBtn = document.createElement('button');
-            downloadBtn.textContent = "Download Results";
-            downloadBtn.classList.add("download-btn");
-            downloadBtn.onclick = () => downloadCSV(data, headers);
-            resultDiv.appendChild(downloadBtn);
-
-            resultDiv.style.display = 'block';
+            html += `<p class="pay-prompt">इस वर्ष भी अपना स्नेह बनाए रखें 🙏 — नीचे <b>“इस वर्ष का चंदा दें”</b> अनुभाग से अपनी इच्छानुसार राशि दें।</p>`;
+            html += '</div>';
+            resultDiv.innerHTML = html;
         }
 
-        function downloadCSV(data, headers) {
-            const csv = Papa.unparse({ fields: headers, data: data });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'donation_results.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        function buildUpiUrl(amount) {
+            let url = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE)}&cu=INR`;
+            if (amount && amount > 0) url += `&am=${amount}`;
+            url += `&tn=${encodeURIComponent('Durga Puja Chanda 2026')}`;
+            return url;
         }
 
-        function handleAutocomplete(event) {
-            const name = event.target.value.trim().toLowerCase();
-            if (!name || allData.length === 0) return;
-
-            const suggestions = allData
-                .filter(row => row.name.toLowerCase().includes(name))
-                .slice(0, 5)
-                .map(row => row.name);
-
-            let datalist = document.getElementById("nameSuggestions");
-            if (!datalist) {
-                datalist = document.createElement("datalist");
-                datalist.id = "nameSuggestions";
-                document.body.appendChild(datalist);
-                event.target.setAttribute("list", "nameSuggestions");
+        function payNow(amount) {
+            const url = buildUpiUrl(amount || 0);
+            // On desktop UPI links do nothing — tell the user to scan.
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (!isMobile) {
+                showToast('मोबाइल पर खोलें या QR स्कैन करें 📱');
+                return false;
             }
-            datalist.innerHTML = '';
-            suggestions.forEach(name => {
-                const option = document.createElement("option");
-                option.value = name;
-                datalist.appendChild(option);
+            window.location.href = url;
+            return false;
+        }
+
+        function copyText(t) {
+            navigator.clipboard?.writeText(t).then(() => showToast('कॉपी हो गया ✓')).catch(() => showToast(t));
+        }
+
+        function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+        let toastTimer;
+        function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
+
+        function resetSearch(){document.getElementById('nameInput').value='';document.getElementById('result').style.display='none';allData=[];}
+        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';allData=[];window.scrollTo({top:0,behavior:'smooth'});}
+
+        // live autocomplete
+        document.getElementById('nameInput').addEventListener('input', async function(){
+            const type=document.getElementById('inputType').value;
+            if(!type) return;
+            if(!allData.length || allData.__type!==type){ try{await loadCategory(type);allData.__type=type;}catch{return;} }
+            const v=this.value.trim().toLowerCase();
+            const dl=document.getElementById('nameSuggestions');
+            dl.innerHTML='';
+            if(!v) return;
+            allData.filter(r=>getName(r).toLowerCase().includes(v)).slice(0,6).forEach(r=>{
+                const o=document.createElement('option');o.value=getName(r);dl.appendChild(o);
             });
-        }
-
-        function resetSearch() {
-            document.querySelector('input[name="name"]').value = '';
-            document.getElementById("result").style.display = 'none';
-            document.querySelector(".thank-you-message").style.display = 'none';
-        }
-
-        function resetAll() {
-            document.getElementById("searchForm").reset();
-            document.getElementById("result").style.display = 'none';
-            document.querySelector(".thank-you-message").style.display = 'none';
-        }
+        });
     </script>
-</head>
-<body>
-    <video class="video-bg" autoplay muted loop playsinline>
-        <source src="videos/donation.mp4" type="video/mp4" />
-        <source src="videos/donation.webm" type="video/webm" />
-        <source src="videos/donation.ogv" type="video/ogg" />
-        Your browser does not support the video tag.
-    </video>
-    <div class="overlay"></div>
-
-    <div class="container">
-        <div class="header">
-            <h1 onclick="resetAll()">Durga Puja Samiti Sarmera</h1>
-            <span>(ESTD. 1937)</span>
-            <p>Thank you for your generous contributions last year! Search below to view your donation details.</p>
-        </div>
-
-        <form id="searchForm" onsubmit="handleSearch(event)">
-            <select name="inputType" required onchange="resetSearch()">
-                <option value="" disabled selected>Select Type</option>
-                <!-- <option value="bazaar">Bazaar Chanda</option>
-                <option value="office">Office Chanda</option> -->
-                <option value="gramin">Gramin Chanda</option>
-                <option value="patna">Patna Chanda</option>
-                <option value="navyuvak" selected>Navyuvak Chanda</option>
-            </select>
-            <input type="text" name="name" placeholder="Enter name" required />
-            <button type="submit">Search</button>
-            <button type="button" class="start-over-btn" onclick="resetAll()">Start Over</button>
-        </form>
-
-        <div class="loading">Loading data...</div>
-
-        <div class="thank-you-message">
-            Thank you, <span id="donorName"></span>, for your support!
-        </div>
-
-        <div id="result"></div>
-    </div>
 </body>
 </html>
