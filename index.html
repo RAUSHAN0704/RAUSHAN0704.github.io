@@ -169,7 +169,16 @@
         .pay-card h2 { margin-bottom: 6px; }
         .qr-box { background:#fff; border:1px solid #eee; border-radius:14px; padding:12px; display:block; width:fit-content; max-width:100%; margin:10px auto 6px; box-shadow:0 4px 14px rgba(0,0,0,.08); }
         .qr-box img { width:210px; height:210px; display:block; }
-        .scan-hint { font-size:13px; color:var(--muted); margin:2px 0 14px; }
+        .scan-hint { font-size:13px; color:var(--muted); margin:2px 0 10px; font-weight:600; }
+
+        .or-sep { font-size:13px; color:var(--muted); margin:10px 0 8px; font-weight:700; letter-spacing:1px; }
+        .upi-copy-row { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:4px 0; }
+        .upi-id-big { font-size:16px; font-weight:800; color:var(--maroon); background:#fff7ea; border:1px dashed #e7c89f; border-radius:8px; padding:6px 10px; }
+        .copy-upi { background:var(--maroon); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:14px; font-weight:700; cursor:pointer; }
+        .copy-upi:active { filter:brightness(1.1); }
+        .upi-copy-hint { font-size:12px; color:var(--muted); margin:6px 2px 14px; line-height:1.5; }
+        .pay-note { font-size:12.5px; color:#8a5a1a; background:#fff7ea; border:1px solid #eadbc8; border-radius:10px; padding:8px 11px; margin:10px 0 0; line-height:1.5; text-align:center; }
+        .pay-note b { color:var(--maroon); }
         .assure { font-size:13px; background:#fff7ea; border:1px dashed #e7c89f; border-radius:10px; padding:9px 12px; color:var(--maroon); font-weight:600; margin:12px 0; }
 
         .bank { text-align:left; background:#fffdf9; border:1px solid #eadbc8; border-radius:12px; padding:12px 14px; margin-top:12px; font-size:14px; }
@@ -233,15 +242,23 @@
         <!-- Payment (always visible) -->
         <div class="card pay-card">
             <h2>💳 इस वर्ष का चंदा दें</h2>
-            <p class="pay-prompt">PhonePe / Google Pay / Paytm — किसी भी UPI ऐप से<br /><b>QR स्कैन करें</b> या नीचे का बटन दबाएँ।</p>
-
-            <a id="payBtn" class="btn btn-phonepe" href="#" onclick="return openPay('phonepe')">PhonePe से भुगतान करें 📲</a>
-            <a class="btn btn-upi-alt" href="#" onclick="return openPay('upi')">किसी और UPI ऐप से भुगतान करें</a>
+            <p class="pay-prompt"><b>PhonePe / Google Pay / Paytm</b> ऐप खोलें →<br />नीचे का <b>QR कोड स्कैन करें</b> — सबसे आसान और भरोसेमंद तरीका।</p>
 
             <div class="qr-box">
                 <img src="images/upi-qr.png" alt="UPI QR — दुर्गा पूजा समिति सरमेरा" loading="lazy" />
             </div>
-            <div class="scan-hint">UPI ID: <b>pnbsarmera@ybl</b></div>
+            <div class="scan-hint">📷 ऊपर दिया QR किसी भी UPI ऐप से स्कैन करें</div>
+
+            <div class="or-sep">— या —</div>
+
+            <div class="upi-copy-row">
+                <span class="upi-id-big">pnbsarmera@ybl</span>
+                <button class="copy-upi" onclick="copyText('pnbsarmera@ybl')">UPI ID कॉपी करें</button>
+            </div>
+            <p class="upi-copy-hint">UPI ID कॉपी करके अपने PhonePe/GPay में "Pay to UPI ID / Send to UPI ID" में पेस्ट करें।</p>
+
+            <a id="payBtn" class="btn btn-phonepe" href="#" onclick="return openPay('phonepe')">PhonePe खोलें 📲</a>
+            <p class="pay-note">⚠️ अगर PhonePe "security reason" की वजह से रोक दे, तो ऊपर दिया <b>QR स्कैन करें</b> — उससे भुगतान हमेशा होगा।</p>
 
             <div class="assure">✅ आपका भुगतान सीधे <b>दुर्गा पूजा समिति सरमेरा</b> के खाते में जाएगा।</div>
 
