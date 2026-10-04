@@ -110,6 +110,7 @@
         }
 
         .btn {
+            display: block;
             width: 100%;
             border: none;
             border-radius: 12px;
@@ -118,6 +119,9 @@
             font-weight: 700;
             font-family: inherit;
             cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            box-sizing: border-box;
             transition: transform .12s, filter .2s;
         }
         .btn:active { transform: scale(0.98); }
@@ -126,6 +130,10 @@
         .btn-ghost { background:#fff; color:var(--maroon); border:1.5px solid #e7cdb8; margin-top:10px; }
         .btn-pay { background: linear-gradient(90deg, #1b7a3d, #2ea35a); color:#fff; font-size:17px; }
         .btn-pay:hover { filter:brightness(1.05); }
+        .btn-phonepe { background: linear-gradient(90deg, #5f259f, #7b36c9); color:#fff; font-size:17px; }
+        .btn-phonepe:hover { filter:brightness(1.08); }
+        .btn-upi-alt { background:#fff; color:#5f259f; border:1.5px solid #d9c7ee; font-size:14px; margin-top:8px; }
+        .btn-upi-alt:hover { background:#f7f2fc; }
 
         .loading { text-align:center; color:var(--muted); font-style:italic; margin-top:12px; display:none; }
 
@@ -173,6 +181,7 @@
         details.bank-wrap { margin-top:12px; }
         details.bank-wrap summary { cursor:pointer; color:var(--maroon); font-weight:700; font-size:14px; list-style:none; text-align:center; padding:8px; }
         details.bank-wrap summary::-webkit-details-marker { display:none; }
+        .bank-title { margin-top:16px; color:var(--maroon); font-weight:700; font-size:15px; text-align:center; }
 
         .footer { text-align:center; margin-top:22px; font-size:12px; color:var(--muted); line-height:1.6; }
         .footer .jai { color:var(--maroon); font-weight:800; font-size:14px; }
@@ -226,7 +235,8 @@
             <h2>💳 इस वर्ष का चंदा दें</h2>
             <p class="pay-prompt">PhonePe / Google Pay / Paytm — किसी भी UPI ऐप से<br /><b>QR स्कैन करें</b> या नीचे का बटन दबाएँ।</p>
 
-            <a id="payBtn" class="btn btn-pay" href="#" onclick="return payNow()">UPI से भुगतान करें 📲</a>
+            <a id="payBtn" class="btn btn-phonepe" href="#" onclick="return openPay('phonepe')">PhonePe से भुगतान करें 📲</a>
+            <a class="btn btn-upi-alt" href="#" onclick="return openPay('upi')">किसी और UPI ऐप से भुगतान करें</a>
 
             <div class="qr-box">
                 <img src="images/upi-qr.png" alt="UPI QR — दुर्गा पूजा समिति सरमेरा" loading="lazy" />
@@ -235,15 +245,13 @@
 
             <div class="assure">✅ आपका भुगतान सीधे <b>दुर्गा पूजा समिति सरमेरा</b> के खाते में जाएगा।</div>
 
-            <details class="bank-wrap">
-                <summary>🏦 बैंक खाते से भुगतान (क्लिक करें)</summary>
-                <div class="bank">
-                    <div class="brow"><span class="bk">खाता नाम</span><span class="bv">DURGA POOJA SAMATI SARMERA</span></div>
-                    <div class="brow"><span class="bk">खाता संख्या</span><span class="bv">3108000120185953 <button class="copy" onclick="copyText('3108000120185953')">कॉपी</button></span></div>
-                    <div class="brow"><span class="bk">IFSC</span><span class="bv">PUNB0310800 <button class="copy" onclick="copyText('PUNB0310800')">कॉपी</button></span></div>
-                    <div class="brow"><span class="bk">बैंक</span><span class="bv">Punjab National Bank</span></div>
-                </div>
-            </details>
+            <div class="bank-title">🏦 बैंक खाते से भुगतान</div>
+            <div class="bank">
+                <div class="brow"><span class="bk">खाता नाम</span><span class="bv">DURGA POOJA SAMATI SARMERA</span></div>
+                <div class="brow"><span class="bk">खाता संख्या</span><span class="bv">3108000120185953 <button class="copy" onclick="copyText('3108000120185953')">कॉपी</button></span></div>
+                <div class="brow"><span class="bk">IFSC</span><span class="bv">PUNB0310800 <button class="copy" onclick="copyText('PUNB0310800')">कॉपी</button></span></div>
+                <div class="brow"><span class="bk">बैंक</span><span class="bv">Punjab National Bank</span></div>
+            </div>
         </div>
 
         <div class="footer">
@@ -347,24 +355,24 @@
             resultDiv.innerHTML = html;
         }
 
-        function buildUpiUrl(amount) {
-            let url = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE)}&cu=INR`;
-            if (amount && amount > 0) url += `&am=${amount}`;
-            url += `&tn=${encodeURIComponent('Durga Puja Chanda 2026')}`;
-            return url;
+        function upiParams(amount) {
+            let p = `pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE)}&cu=INR`;
+            if (amount && amount > 0) p += `&am=${amount}`;
+            p += `&tn=${encodeURIComponent('Durga Puja Chanda 2026')}`;
+            return p;
         }
+        function buildUpiUrl(amount) { return `upi://pay?${upiParams(amount)}`; }
+        function buildPhonePeUrl(amount) { return `phonepe://pay?${upiParams(amount)}`; }
 
-        function payNow(amount) {
-            const url = buildUpiUrl(amount || 0);
-            // On desktop UPI links do nothing — tell the user to scan.
+        function openPay(scheme, amount) {
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if (!isMobile) {
-                showToast('मोबाइल पर खोलें या QR स्कैन करें 📱');
-                return false;
-            }
+            if (!isMobile) { showToast('कृपया मोबाइल पर खोलें या QR स्कैन करें 📱'); return false; }
+            const url = scheme === 'phonepe' ? buildPhonePeUrl(amount || 0) : buildUpiUrl(amount || 0);
             window.location.href = url;
             return false;
         }
+        // kept for backward compat
+        function payNow(amount) { return openPay('upi', amount); }
 
         function copyText(t) {
             navigator.clipboard?.writeText(t).then(() => showToast('कॉपी हो गया ✓')).catch(() => showToast(t));
