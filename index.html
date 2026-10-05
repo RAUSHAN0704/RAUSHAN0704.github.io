@@ -171,16 +171,6 @@
         .copy-upi { background:var(--maroon); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:14px; font-weight:700; cursor:pointer; }
         .copy-upi:active { filter:brightness(1.1); }
         .upi-copy-hint { font-size:12px; color:var(--muted); margin:6px 2px 14px; line-height:1.5; }
-
-        .app-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:4px 0 8px; }
-        .app-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 10px; border:none; border-radius:12px; font-size:15px; font-weight:800; color:#fff; cursor:pointer; }
-        .app-btn:active { filter:brightness(1.08); }
-        .app-btn .app-ic { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,.25); font-size:14px; font-weight:900; }
-        .app-btn.gpay { background:#1a73e8; }
-        .app-btn.paytm { background:#00baf2; }
-        .app-btn.bhim { background:#00826b; }
-        .app-btn.phonepe { background:#5f259f; }
-        .app-note { font-size:12px; color:var(--muted); margin:4px 2px 10px; line-height:1.5; }
         .assure { font-size:13px; background:#fff7ea; border:1px dashed #e7c89f; border-radius:10px; padding:9px 12px; color:var(--maroon); font-weight:600; margin:12px 0; }
 
         .bank { text-align:left; background:#fffdf9; border:1px solid #eadbc8; border-radius:12px; padding:12px 14px; margin-top:12px; font-size:14px; }
@@ -251,25 +241,7 @@
             </div>
             <div class="scan-hint">📷 ऊपर दिया QR किसी भी UPI ऐप से स्कैन करें</div>
 
-            <div class="or-sep">— या — ऐप चुनकर भुगतान करें —</div>
-
-            <div class="app-grid">
-                <button type="button" class="app-btn gpay" onclick="payWith('gpay')">
-                    <span class="app-ic">G</span> Google Pay
-                </button>
-                <button type="button" class="app-btn paytm" onclick="payWith('paytm')">
-                    <span class="app-ic">P</span> Paytm
-                </button>
-                <button type="button" class="app-btn bhim" onclick="payWith('bhim')">
-                    <span class="app-ic">भ</span> BHIM
-                </button>
-                <button type="button" class="app-btn phonepe" onclick="payWith('phonepe')">
-                    <span class="app-ic">₹</span> PhonePe
-                </button>
-            </div>
-            <p class="app-note">⚠️ अगर कोई ऐप "security reason" की वजह से रोके, तो ऊपर दिया <b>QR स्कैन करें</b> — वह हमेशा काम करता है।</p>
-
-            <div class="or-sep">— या — UPI ID से —</div>
+            <div class="or-sep">— या —</div>
 
             <div class="upi-copy-row">
                 <span class="upi-id-big">pnbsarmera@ybl</span>
@@ -391,26 +363,6 @@
 
         function copyText(t) {
             navigator.clipboard?.writeText(t).then(() => showToast('कॉपी हो गया ✓')).catch(() => showToast(t));
-        }
-
-        // Open a specific UPI app with the payee pre-set (no amount — donor types their own).
-        // Explicit per-app targets avoid the generic upi:// link being hijacked by WhatsApp Pay.
-        function payWith(app){
-            const q = `pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE)}&cu=INR`;
-            const isAndroid = /android/i.test(navigator.userAgent);
-            let url;
-            if (app === 'phonepe') {
-                url = `phonepe://pay?${q}`;
-            } else if (isAndroid) {
-                // Android intent URIs targeting each app's package — the reliable path on Android.
-                const pkg = { gpay:'com.google.android.apps.nbu.paisa.user', paytm:'net.one97.paytm', bhim:'in.org.npci.upiapp' }[app];
-                url = `intent://pay?${q}#Intent;scheme=upi;package=${pkg};end`;
-            } else {
-                // iOS / desktop fallback — generic UPI intent.
-                url = `upi://pay?${q}`;
-            }
-            showToast('ऐप खुल रहा है… न खुले तो QR स्कैन करें');
-            window.location.href = url;
         }
 
         function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
