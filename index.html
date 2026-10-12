@@ -346,27 +346,29 @@
             let html = '<div class="card">';
             html += `<h2>🙏 आपका योगदान</h2>`;
             rows.forEach(r => {
-                const amt = parseFloat(getAmount(r)) || 0;
-                const amt24raw = getAmount24(r);
-                const has24 = amt24raw !== null;
-                const amt24 = parseFloat(amt24raw) || 0;
-                const amt26raw = getAmount26(r);
-                const has26 = amt26raw !== '';
-                const amt26 = parseFloat(amt26raw) || 0;
-                const status = getStatus(r).toLowerCase();
-                const paid = status === 'paid';
-                const row2026 = has26
-                    ? `<div class="row"><span class="k">वर्ष 2026 का योगदान</span><span class="v amt">₹ ${amt26.toLocaleString('en-IN')} <span class="pill paid">✓ प्राप्त</span></span></div>`
-                    : '';
-                const row2024 = has24
-                    ? `<div class="row"><span class="k">वर्ष 2024 का योगदान</span><span class="v amt2">₹ ${amt24.toLocaleString('en-IN')}</span></div>`
-                    : '';
+                const amt25 = parseFloat(getAmount(r)) || 0;
+                const amt24 = parseFloat(getAmount24(r)) || 0;
+                const amt26 = parseFloat(getAmount26(r)) || 0;
+
+                // Build year rows chronologically. Only 2024 is hidden when it has no entry;
+                // 2025 always shows (baseline), 2026 shows once an amount is entered.
+                const years = [
+                    { label: 'वर्ष 2024 का योगदान', amt: amt24, paid: false, show: amt24 > 0 },
+                    { label: 'वर्ष 2025 का योगदान', amt: amt25, paid: false, show: true },
+                    { label: 'वर्ष 2026 का योगदान', amt: amt26, paid: true, show: amt26 > 0 },
+                ].filter(y => y.show);
+
+                // Highlight the newest present year; older ones muted.
+                const rowsHtml = years.map((y, i) => {
+                    const isNewest = i === years.length - 1;
+                    const pill = y.paid ? ' <span class="pill paid">✓ प्राप्त</span>' : '';
+                    return `<div class="row"><span class="k">${y.label}</span><span class="v ${isNewest ? 'amt' : 'amt2'}">₹ ${y.amt.toLocaleString('en-IN')}${pill}</span></div>`;
+                }).join('');
+
                 html += `
                     <div class="donor">
                         <p class="dname">${escapeHtml(getName(r))}</p>
-                        ${row2026}
-                        ${row2024}
-                        <div class="row"><span class="k">वर्ष 2025 का योगदान</span><span class="v ${has26 ? 'amt2' : 'amt'}">₹ ${amt.toLocaleString('en-IN')}</span></div>
+                        ${rowsHtml}
                     </div>`;
             });
             html += `<p class="pay-prompt">इस वर्ष भी अपना स्नेह बनाए रखें 🙏 — नीचे <b>“इस वर्ष का चंदा दें”</b> अनुभाग से अपनी इच्छानुसार राशि दें।</p>`;
