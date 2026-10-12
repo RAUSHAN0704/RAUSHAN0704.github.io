@@ -275,6 +275,12 @@
         let allData = [];
         let lastAmount = 0; // last searched donor's amount, used to prefill UPI
 
+        // Live data source: published Google Sheet tabs (CSV). Edit the Sheet to update
+        // this year's (2026) collection; it reflects on the site within a few minutes.
+        const SHEET_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWyv4osKtgDwmw9IpQEZXCXLz_U_mifJZNyTM61Xk9WpxxGFDD2_q6nXKoqEaCOMnqELYEi2A9ImwM/pub";
+        const SHEET_GID = { navyuvak: "0", gramin: "1511756949", patna: "1328852293" };
+        const sheetUrl = type => `${SHEET_BASE}?gid=${SHEET_GID[type]}&single=true&output=csv&cb=${Date.now()}`;
+
         // normalize keys (strip BOM / spaces) so row.name & amount read reliably
         function pick(row, candidates) {
             const keys = Object.keys(row);
@@ -287,10 +293,11 @@
         const getName    = r => (pick(r, ['name']) || '').toString();
         const getAmount  = r => (pick(r, ['Amount (2025)', 'Amount(2025)', 'amount']) || '0').toString().replace(/[^\d.]/g,'');
         const getAmount24= r => { const v = pick(r, ['Amount (2024)', 'Amount(2024)']); return v === undefined ? null : v.toString().replace(/[^\d.]/g,''); };
+        const getAmount26= r => { const v = pick(r, ['Amount (2026)', 'Amount(2026)']); return (v === undefined ? '' : v.toString()).replace(/[^\d.]/g,''); };
         const getStatus  = r => (pick(r, ['Status']) || '').toString().trim();
 
         async function loadCategory(type) {
-            const res = await fetch(`data/${type}_data.csv`);
+            const res = await fetch(sheetUrl(type), { cache: 'no-store' });
             const txt = await res.text();
             allData = Papa.parse(txt, { header: true, skipEmptyLines: true }).data
                         .filter(r => getName(r).trim() !== '');
@@ -337,23 +344,29 @@
             lastAmount = parseFloat(getAmount(first)) || 0;
 
             let html = '<div class="card">';
-            html += `<h2>🙏 आपका पिछले वर्ष का योगदान</h2>`;
+            html += `<h2>🙏 आपका योगदान</h2>`;
             rows.forEach(r => {
                 const amt = parseFloat(getAmount(r)) || 0;
                 const amt24raw = getAmount24(r);
                 const has24 = amt24raw !== null;
                 const amt24 = parseFloat(amt24raw) || 0;
+                const amt26raw = getAmount26(r);
+                const has26 = amt26raw !== '';
+                const amt26 = parseFloat(amt26raw) || 0;
                 const status = getStatus(r).toLowerCase();
                 const paid = status === 'paid';
+                const row2026 = has26
+                    ? `<div class="row"><span class="k">वर्ष 2026 का योगदान</span><span class="v amt">₹ ${amt26.toLocaleString('en-IN')} <span class="pill paid">✓ प्राप्त</span></span></div>`
+                    : '';
                 const row2024 = has24
                     ? `<div class="row"><span class="k">वर्ष 2024 का योगदान</span><span class="v amt2">₹ ${amt24.toLocaleString('en-IN')}</span></div>`
                     : '';
                 html += `
                     <div class="donor">
                         <p class="dname">${escapeHtml(getName(r))}</p>
+                        ${row2026}
                         ${row2024}
-                        <div class="row"><span class="k">वर्ष 2025 का योगदान</span><span class="v amt">₹ ${amt.toLocaleString('en-IN')}</span></div>
-                        <div class="row"><span class="k">स्थिति (2025)</span><span>${paid ? '<span class="pill paid">✓ प्राप्त</span>' : '<span class="pill due">बकाया</span>'}</span></div>
+                        <div class="row"><span class="k">वर्ष 2025 का योगदान</span><span class="v ${has26 ? 'amt2' : 'amt'}">₹ ${amt.toLocaleString('en-IN')}</span></div>
                     </div>`;
             });
             html += `<p class="pay-prompt">इस वर्ष भी अपना स्नेह बनाए रखें 🙏 — नीचे <b>“इस वर्ष का चंदा दें”</b> अनुभाग से अपनी इच्छानुसार राशि दें।</p>`;
