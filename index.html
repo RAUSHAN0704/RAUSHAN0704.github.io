@@ -143,6 +143,7 @@
             box-shadow: 0 6px 18px rgba(138,0,37,0.08);
         }
         .donor .dname { font-size:18px; font-weight:800; color:var(--maroon); margin:0 0 10px; }
+        .cat-badge { display:inline-block; font-size:11px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:999px; padding:2px 9px; margin:0 0 8px; letter-spacing:.3px; }
         .donor .row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px dashed #eadbc8; }
         .donor .row:first-of-type { border-top:none; }
         .donor .k { font-size:14px; color:var(--muted); font-weight:600; }
@@ -210,14 +211,6 @@
         <div class="card">
             <h2>🔎 अपना योगदान खोजें</h2>
             <form id="searchForm" onsubmit="handleSearch(event)">
-                <label for="inputType">श्रेणी चुनें</label>
-                <select id="inputType" name="inputType" required onchange="resetSearch()">
-                    <option value="" disabled selected>— श्रेणी चुनें —</option>
-                    <option value="navyuvak" selected>नवयुवक चंदा (Navyuvak)</option>
-                    <option value="gramin">ग्रामीण चंदा (Gramin)</option>
-                    <option value="patna">पटना चंदा (Patna)</option>
-                </select>
-
                 <label for="nameInput">अपना नाम लिखें</label>
                 <input type="text" id="nameInput" name="name" placeholder="जैसे: Mithriya Kashyap" required list="nameSuggestions" autocomplete="off" />
                 <datalist id="nameSuggestions"></datalist>
@@ -279,6 +272,7 @@
         // this year's (2026) collection; it reflects on the site within a few minutes.
         const SHEET_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWyv4osKtgDwmw9IpQEZXCXLz_U_mifJZNyTM61Xk9WpxxGFDD2_q6nXKoqEaCOMnqELYEi2A9ImwM/pub";
         const SHEET_GID = { navyuvak: "0", gramin: "1511756949", patna: "1328852293" };
+        const CAT_LABEL = { navyuvak: "नवयुवक चंदा", gramin: "ग्रामीण चंदा", patna: "पटना चंदा" };
         const sheetUrl = type => `${SHEET_BASE}?gid=${SHEET_GID[type]}&single=true&output=csv&cb=${Date.now()}`;
 
         // normalize keys (strip BOM / spaces) so row.name & amount read reliably
@@ -295,19 +289,26 @@
         const getAmount24= r => { const v = pick(r, ['Amount (2024)', 'Amount(2024)']); return v === undefined ? null : v.toString().replace(/[^\d.]/g,''); };
         const getAmount26= r => { const v = pick(r, ['Amount (2026)', 'Amount(2026)']); return (v === undefined ? '' : v.toString()).replace(/[^\d.]/g,''); };
         const getStatus  = r => (pick(r, ['Status']) || '').toString().trim();
+        const getCat     = r => r.__cat || '';
 
-        async function loadCategory(type) {
-            const res = await fetch(sheetUrl(type), { cache: 'no-store' });
-            const txt = await res.text();
-            allData = Papa.parse(txt, { header: true, skipEmptyLines: true }).data
-                        .filter(r => getName(r).trim() !== '');
+        // Load all three category tabs once, tag each row with its category, merge.
+        async function loadAll() {
+            if (allData.length) return allData;
+            const types = Object.keys(SHEET_GID);
+            const results = await Promise.all(types.map(async type => {
+                const res = await fetch(sheetUrl(type), { cache: 'no-store' });
+                const txt = await res.text();
+                return Papa.parse(txt, { header: true, skipEmptyLines: true }).data
+                        .filter(r => getName(r).trim() !== '')
+                        .map(r => { r.__cat = type; return r; });
+            }));
+            allData = results.flat();
             return allData;
         }
 
         async function handleSearch(event) {
             event.preventDefault();
             const name = document.getElementById('nameInput').value.trim().toLowerCase();
-            const type = document.getElementById('inputType').value;
             const resultDiv = document.getElementById('result');
             const loading = document.getElementById('loading');
             resultDiv.style.display = 'none';
@@ -317,14 +318,11 @@
 
             loading.style.display = 'block';
             try {
-                if (!allData.length || allData.__type !== type) {
-                    await loadCategory(type);
-                    allData.__type = type;
-                }
+                await loadAll();
                 const matches = allData.filter(r => getName(r).toLowerCase().includes(name));
                 loading.style.display = 'none';
                 if (!matches.length) {
-                    resultDiv.innerHTML = `<div class="card"><p class="no-results">"${escapeHtml(name)}" नाम से कोई रिकॉर्ड नहीं मिला।<br/>कृपया वर्तनी जाँचें या दूसरी श्रेणी चुनें। 🙏</p></div>`;
+                    resultDiv.innerHTML = `<div class="card"><p class="no-results">"${escapeHtml(name)}" नाम से कोई रिकॉर्ड नहीं मिला।<br/>कृपया वर्तनी जाँचें। 🙏</p></div>`;
                     resultDiv.style.display = 'block';
                     return;
                 }
@@ -367,6 +365,7 @@
 
                 html += `
                     <div class="donor">
+                        <span class="cat-badge">${CAT_LABEL[getCat(r)] || ''}</span>
                         <p class="dname">${escapeHtml(getName(r))}</p>
                         ${rowsHtml}
                     </div>`;
@@ -385,20 +384,23 @@
         let toastTimer;
         function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
 
-        function resetSearch(){document.getElementById('nameInput').value='';document.getElementById('result').style.display='none';allData=[];}
-        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';allData=[];window.scrollTo({top:0,behavior:'smooth'});}
+        function resetSearch(){document.getElementById('nameInput').value='';document.getElementById('result').style.display='none';}
+        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';window.scrollTo({top:0,behavior:'smooth'});}
 
-        // live autocomplete
+        // live autocomplete — suggests names across all three categories
         document.getElementById('nameInput').addEventListener('input', async function(){
-            const type=document.getElementById('inputType').value;
-            if(!type) return;
-            if(!allData.length || allData.__type!==type){ try{await loadCategory(type);allData.__type=type;}catch{return;} }
+            try{ await loadAll(); }catch{ return; }
             const v=this.value.trim().toLowerCase();
             const dl=document.getElementById('nameSuggestions');
             dl.innerHTML='';
             if(!v) return;
-            allData.filter(r=>getName(r).toLowerCase().includes(v)).slice(0,6).forEach(r=>{
-                const o=document.createElement('option');o.value=getName(r);dl.appendChild(o);
+            const seen=new Set();
+            allData.filter(r=>getName(r).toLowerCase().includes(v)).forEach(r=>{
+                const n=getName(r);
+                if(seen.has(n)) return;
+                seen.add(n);
+                if(seen.size>8) return;
+                const o=document.createElement('option');o.value=n;dl.appendChild(o);
             });
         });
     </script>
