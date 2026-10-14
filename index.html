@@ -159,6 +159,22 @@
 
         .no-results { text-align:center; color:#b5651d; font-style:italic; padding:10px; }
 
+        /* ---------- Group / consolidated total ---------- */
+        .group-box { background:linear-gradient(160deg,#f2fbf4 0%,#e7f6ec 100%); border:1.5px solid #bfe6cb; border-radius:16px; padding:16px; margin-top:4px; box-shadow:0 6px 18px rgba(27,122,61,0.1); }
+        .group-box h3 { margin:0 0 10px; font-size:16px; color:var(--green); text-align:center; }
+        .group-totals { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
+        .group-totals .row { display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:#fff; border-radius:10px; border:1px solid #d8eede; }
+        .group-totals .k { font-size:14px; color:var(--muted); font-weight:700; }
+        .group-totals .v { font-size:18px; font-weight:800; color:var(--green); }
+        .group-totals .v.old { font-size:15px; color:var(--muted); }
+        .group-members { font-size:13px; color:var(--ink); }
+        .group-members summary { cursor:pointer; color:var(--green); font-weight:700; list-style:none; padding:4px 2px; }
+        .group-members summary::-webkit-details-marker { display:none; }
+        .gm-row { display:flex; justify-content:space-between; gap:8px; padding:5px 2px; border-top:1px dashed #cfe6d6; }
+        .gm-row .gm-name { font-weight:600; }
+        .gm-row .gm-cat { font-size:11px; color:var(--muted); }
+        .gm-row .gm-amt { font-weight:800; white-space:nowrap; }
+
         /* ---------- Payment section ---------- */
         .pay-card { text-align:center; }
         .pay-card h2 { margin-bottom: 6px; }
@@ -292,6 +308,7 @@
         const getAmount24= r => { const v = pick(r, ['Amount (2024)', 'Amount(2024)']); return v === undefined ? null : v.toString().replace(/[^\d.]/g,''); };
         const getAmount26= r => { const v = pick(r, ['Amount (2026)', 'Amount(2026)']); return (v === undefined ? '' : v.toString()).replace(/[^\d.]/g,''); };
         const getStatus  = r => (pick(r, ['Status']) || '').toString().trim();
+        const getGroup   = r => (pick(r, ['Group']) || '').toString().trim();
         const getCat     = r => r.__cat || '';
 
         // Load all three category tabs once, tag each row with its category, merge.
@@ -375,7 +392,65 @@
             });
             html += `<p class="pay-prompt">इस वर्ष भी अपना स्नेह बनाए रखें 🙏 — नीचे <b>“इस वर्ष का चंदा दें”</b> अनुभाग से अपनी इच्छानुसार राशि दें।</p>`;
             html += '</div>';
+            html += renderGroup(first);
             resultDiv.innerHTML = html;
+        }
+
+        // Consolidated "आपके द्वारा प्राप्त कुल योगदान": sum each year across every row
+        // sharing the same Group label (across all three categories). The payer name
+        // (the Group label) is used only to link rows — it is NOT shown on screen.
+        function renderGroup(donor) {
+            const grp = getGroup(donor);
+            if (!grp) return '';
+            const key = grp.toLowerCase();
+            const members = allData.filter(r => getGroup(r).toLowerCase() === key);
+            if (members.length < 2) return ''; // nothing to consolidate for a lone row
+
+            let t24 = 0, t25 = 0, t26 = 0, has24 = false, has26 = false;
+            members.forEach(r => {
+                const a24 = parseFloat(getAmount24(r)) || 0;
+                const a25 = parseFloat(getAmount(r)) || 0;
+                const a26 = parseFloat(getAmount26(r)) || 0;
+                if (a24 > 0) has24 = true;
+                if (a26 > 0) has26 = true;
+                t24 += a24; t25 += a25; t26 += a26;
+            });
+
+            const totals = [];
+            if (has24) totals.push({ label: 'वर्ष 2024', amt: t24, old: true });
+            totals.push({ label: 'वर्ष 2025', amt: t25, old: has26 }); // muted if 2026 present
+            if (has26) totals.push({ label: 'वर्ष 2026', amt: t26, old: false });
+
+            const totalsHtml = totals.map(x =>
+                `<div class="row"><span class="k">${x.label} का कुल योगदान</span><span class="v ${x.old ? 'old' : ''}">₹ ${x.amt.toLocaleString('en-IN')}</span></div>`
+            ).join('');
+
+            const membersHtml = members.map(r => {
+                const a24 = parseFloat(getAmount24(r)) || 0;
+                const a25 = parseFloat(getAmount(r)) || 0;
+                const a26 = parseFloat(getAmount26(r)) || 0;
+                const parts = [];
+                if (a26 > 0) parts.push(`2026: ₹${a26.toLocaleString('en-IN')}`);
+                if (a25 > 0) parts.push(`2025: ₹${a25.toLocaleString('en-IN')}`);
+                if (a24 > 0) parts.push(`2024: ₹${a24.toLocaleString('en-IN')}`);
+                return `<div class="gm-row">
+                            <span><span class="gm-name">${escapeHtml(getName(r))}</span>
+                            <span class="gm-cat">(${CAT_LABEL[getCat(r)] || ''})</span></span>
+                            <span class="gm-amt">${parts.join(' · ') || '—'}</span>
+                        </div>`;
+            }).join('');
+
+            return `
+                <div class="card">
+                    <div class="group-box">
+                        <h3>🙏 आपके द्वारा प्राप्त कुल योगदान</h3>
+                        <div class="group-totals">${totalsHtml}</div>
+                        <details class="group-members">
+                            <summary>विवरण देखें (${members.length} योगदान) ▾</summary>
+                            ${membersHtml}
+                        </details>
+                    </div>
+                </div>`;
         }
 
         function copyText(t) {
