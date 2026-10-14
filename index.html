@@ -286,6 +286,7 @@
         const PAYEE   = "Durga Puja Samiti Sarmera";
         let allData = [];
         let lastAmount = 0; // last searched donor's amount, used to prefill UPI
+        let renderedGroups = new Set(); // group labels already rendered in current search
 
         // Live data source: published Google Sheet tabs (CSV). Edit the Sheet to update
         // this year's (2026) collection; it reflects on the site within a few minutes.
@@ -360,6 +361,7 @@
             const resultDiv = document.getElementById('result');
             const first = rows[0];
             lastAmount = parseFloat(getAmount(first)) || 0;
+            renderedGroups = new Set(); // reset per search so each group shows once
 
             let html = '<div class="card">';
             html += `<h2>🙏 आपका योगदान</h2>`;
@@ -389,10 +391,11 @@
                         <p class="dname">${escapeHtml(getName(r))}</p>
                         ${rowsHtml}
                     </div>`;
+                // Group total attached to THIS person's card (only if they have a group).
+                html += renderGroup(r);
             });
             html += `<p class="pay-prompt">इस वर्ष भी अपना स्नेह बनाए रखें 🙏 — नीचे <b>“इस वर्ष का चंदा दें”</b> अनुभाग से अपनी इच्छानुसार राशि दें।</p>`;
             html += '</div>';
-            html += renderGroup(first);
             resultDiv.innerHTML = html;
         }
 
@@ -403,8 +406,10 @@
             const grp = getGroup(donor);
             if (!grp) return '';
             const key = grp.toLowerCase();
+            if (renderedGroups.has(key)) return ''; // already shown this group in this search
             const members = allData.filter(r => getGroup(r).toLowerCase() === key);
             if (members.length < 2) return ''; // nothing to consolidate for a lone row
+            renderedGroups.add(key);
 
             let t24 = 0, t25 = 0, t26 = 0, has24 = false, has26 = false;
             members.forEach(r => {
