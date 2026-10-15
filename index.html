@@ -347,6 +347,31 @@
         const getRelation= r => (pick(r, ['Relation', 'relation', 'रिश्ता', 'S/O D/O']) || '').toString().trim();
         // Combined searchable text: clean name + relation + any aliases, lowercased.
         const searchText = r => (getName(r) + ' ' + getRelation(r) + ' ' + getAlias(r)).toLowerCase();
+
+        // Rank a row against the query: lower score = more relevant.
+        // Name matches always beat relation/alias matches; a match at the start of the
+        // name beats one in the middle; so searching "Murari" puts the person NAMED
+        // Murari on top, above everyone whose father is "S/O Murari".
+        function matchScore(r, q) {
+            const name = getName(r).toLowerCase();
+            const rel  = getRelation(r).toLowerCase();
+            const ali  = getAlias(r).toLowerCase();
+            if (name === q) return 0;                 // exact name
+            if (name.startsWith(q)) return 1;         // name starts with query
+            if (name.includes(q)) return 2;           // name contains query
+            if (rel.includes(q)) return 3;            // relation (e.g. S/O Murari)
+            if (ali.includes(q)) return 4;            // alias
+            return 5;                                  // shouldn't happen (already filtered)
+        }
+        // Filter to rows that match anywhere, then sort by relevance, then alphabetically.
+        function rankedMatches(q) {
+            return allData
+                .filter(r => searchText(r).includes(q))
+                .sort((a, b) => {
+                    const d = matchScore(a, q) - matchScore(b, q);
+                    return d !== 0 ? d : getName(a).localeCompare(getName(b));
+                });
+        }
         const getCat     = r => r.__cat || '';
 
         // Load all three category tabs once, tag each row with its category, merge.
@@ -372,7 +397,7 @@
             if (!name) return;
             try {
                 await loadAll();
-                const matches = allData.filter(r => searchText(r).includes(name));
+                const matches = rankedMatches(name);
                 if (matches.length === 1) { selectDonor(matches[0]); }
                 else { buildSuggestions(); }
             } catch (e) { /* autocomplete load errors are shown via toast elsewhere */ }
@@ -527,7 +552,7 @@
             try{ await loadAll(); }catch{ return; }
             const v = nameInput.value.trim().toLowerCase();
             if(!v){ closeSuggestions(); return; }
-            sugRows = allData.filter(r => searchText(r).includes(v)).slice(0, 10);
+            sugRows = rankedMatches(v).slice(0, 10);
             activeIdx = -1;
             if(!sugRows.length){
                 sugBox.innerHTML = `<div class="sug-empty">"${escapeHtml(nameInput.value.trim())}" से कोई नाम नहीं मिला — वर्तनी जाँचें 🙏</div>`;
