@@ -191,10 +191,16 @@
         .group-members { font-size:13px; color:var(--ink); }
         .group-members summary { cursor:pointer; color:var(--green); font-weight:700; list-style:none; padding:4px 2px; }
         .group-members summary::-webkit-details-marker { display:none; }
-        .gm-row { display:flex; justify-content:space-between; gap:8px; padding:5px 2px; border-top:1px dashed #cfe6d6; }
-        .gm-row .gm-name { font-weight:600; }
-        .gm-row .gm-cat { font-size:11px; color:var(--muted); }
-        .gm-row .gm-amt { font-weight:800; white-space:nowrap; }
+        .gm-card { background:#fff; border:1px solid #d8eede; border-radius:12px; padding:10px 12px; margin-top:10px; }
+        .gm-card:first-of-type { margin-top:8px; }
+        .gm-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
+        .gm-name { font-size:15px; font-weight:800; color:var(--maroon); }
+        .gm-cat { font-size:10px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:999px; padding:2px 8px; white-space:nowrap; }
+        .gm-year { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-top:1px dashed #e4efe8; }
+        .gm-year:first-of-type { border-top:none; }
+        .gm-year .yr { font-size:13px; color:var(--muted); font-weight:600; }
+        .gm-year .amt { font-size:15px; font-weight:800; color:var(--green); }
+        .gm-none { font-size:12px; color:var(--muted); font-style:italic; padding:4px 0; }
 
         /* ---------- Payment section ---------- */
         .pay-card { text-align:center; }
@@ -439,14 +445,21 @@
                 const a24 = parseFloat(getAmount24(r)) || 0;
                 const a25 = parseFloat(getAmount(r)) || 0;
                 const a26 = parseFloat(getAmount26(r)) || 0;
-                const parts = [];
-                if (a26 > 0) parts.push(`2026: ₹${a26.toLocaleString('en-IN')}`);
-                if (a25 > 0) parts.push(`2025: ₹${a25.toLocaleString('en-IN')}`);
-                if (a24 > 0) parts.push(`2024: ₹${a24.toLocaleString('en-IN')}`);
-                return `<div class="gm-row">
-                            <span><span class="gm-name">${escapeHtml(getName(r))}</span>
-                            <span class="gm-cat">(${CAT_LABEL[getCat(r)] || ''})</span></span>
-                            <span class="gm-amt">${parts.join(' · ') || '—'}</span>
+                // One labelled row per year that has an amount (newest first), stacked.
+                const yrs = [
+                    { label: 'वर्ष 2026', amt: a26 },
+                    { label: 'वर्ष 2025', amt: a25 },
+                    { label: 'वर्ष 2024', amt: a24 },
+                ].filter(y => y.amt > 0);
+                const yearsHtml = yrs.length
+                    ? yrs.map(y => `<div class="gm-year"><span class="yr">${y.label}</span><span class="amt">₹ ${y.amt.toLocaleString('en-IN')}</span></div>`).join('')
+                    : `<div class="gm-none">कोई राशि दर्ज नहीं</div>`;
+                return `<div class="gm-card">
+                            <div class="gm-head">
+                                <span class="gm-name">${escapeHtml(getName(r))}</span>
+                                <span class="gm-cat">${CAT_LABEL[getCat(r)] || ''}</span>
+                            </div>
+                            ${yearsHtml}
                         </div>`;
             }).join('');
 
