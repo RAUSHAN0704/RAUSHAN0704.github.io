@@ -144,6 +144,25 @@
         }
         .donor .dname { font-size:18px; font-weight:800; color:var(--maroon); margin:0 0 10px; }
         .cat-badge { display:inline-block; font-size:11px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:999px; padding:2px 9px; margin:0 0 8px; letter-spacing:.3px; }
+
+        /* Custom name-suggestion dropdown (replaces native datalist so selecting auto-loads one person) */
+        .search-field { position:relative; }
+        .suggestions {
+            position:absolute; left:0; right:0; top:100%; z-index:30;
+            background:var(--card); border:1px solid #f0d4a8; border-radius:12px;
+            box-shadow:0 10px 26px rgba(138,0,37,0.16); margin-top:4px;
+            max-height:300px; overflow-y:auto; display:none;
+        }
+        .suggestions.open { display:block; }
+        .sug-item {
+            display:flex; justify-content:space-between; align-items:center; gap:10px;
+            padding:10px 12px; cursor:pointer; border-top:1px solid #f3e6d2;
+        }
+        .sug-item:first-child { border-top:none; }
+        .sug-item:hover, .sug-item.active { background:#fff2dc; }
+        .sug-name { font-size:15px; font-weight:700; color:var(--ink); }
+        .sug-cat { font-size:11px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:999px; padding:2px 8px; white-space:nowrap; }
+        .sug-item.active .sug-cat { background:#fff; }
         .donor .row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px dashed #eadbc8; }
         .donor .row:first-of-type { border-top:none; }
         .donor .k { font-size:14px; color:var(--muted); font-weight:600; }
@@ -231,8 +250,10 @@
             <h2>🔎 अपना योगदान खोजें</h2>
             <form id="searchForm" onsubmit="handleSearch(event)">
                 <label for="nameInput">अपना नाम लिखें</label>
-                <input type="text" id="nameInput" name="name" placeholder="जैसे: Mithriya Kashyap" required list="nameSuggestions" autocomplete="off" />
-                <datalist id="nameSuggestions"></datalist>
+                <div class="search-field">
+                    <input type="text" id="nameInput" name="name" placeholder="जैसे: Mithriya Kashyap" required autocomplete="off" />
+                    <div class="suggestions" id="nameSuggestions"></div>
+                </div>
 
                 <button type="submit" class="btn btn-primary">खोजें</button>
                 <button type="button" class="btn btn-ghost" onclick="resetAll()">नया खोजें</button>
@@ -347,9 +368,14 @@
                     resultDiv.style.display = 'block';
                     return;
                 }
-                renderDonors(matches);
-                resultDiv.style.display = 'block';
-                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Exactly one person — load them directly. Otherwise open the picker so the
+                // user chooses one (we always show details for a single person at a time).
+                if (matches.length === 1) {
+                    selectDonor(matches[0]);
+                } else {
+                    buildSuggestions();
+                    showToast('कृपया सूची में से अपना नाम चुनें 👇');
+                }
             } catch (e) {
                 loading.style.display = 'none';
                 resultDiv.innerHTML = `<div class="card"><p class="no-results">त्रुटि: ${escapeHtml(e.message)}</p></div>`;
@@ -399,7 +425,7 @@
             resultDiv.innerHTML = html;
         }
 
-        // Consolidated "आपके द्वारा प्राप्त कुल योगदान": sum each year across every row
+        // Consolidated "आपके परिवार के द्वारा प्राप्त कुल योगदान": sum each year across every row
         // sharing the same Group label (across all three categories). The payer name
         // (the Group label) is used only to link rows — it is NOT shown on screen.
         function renderGroup(donor) {
@@ -448,7 +474,7 @@
             return `
                 <div class="card">
                     <div class="group-box">
-                        <h3>🙏 आपके द्वारा प्राप्त कुल योगदान</h3>
+                        <h3>🙏 आपके परिवार के द्वारा प्राप्त कुल योगदान</h3>
                         <div class="group-totals">${totalsHtml}</div>
                         <details class="group-members">
                             <summary>विवरण देखें (${members.length} योगदान) ▾</summary>
@@ -468,24 +494,62 @@
         function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
 
         function resetSearch(){document.getElementById('nameInput').value='';document.getElementById('result').style.display='none';}
-        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';window.scrollTo({top:0,behavior:'smooth'});}
+        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';closeSuggestions();window.scrollTo({top:0,behavior:'smooth'});}
 
-        // live autocomplete — suggests names across all three categories
-        document.getElementById('nameInput').addEventListener('input', async function(){
+        // ---- Custom suggestion dropdown: one entry per matching record; selecting auto-loads ONLY that person ----
+        const nameInput = document.getElementById('nameInput');
+        const sugBox = document.getElementById('nameSuggestions');
+        let sugRows = [];      // the row objects currently shown as suggestions
+        let activeIdx = -1;     // keyboard-highlighted suggestion
+
+        function closeSuggestions(){ sugBox.classList.remove('open'); sugBox.innerHTML=''; sugRows=[]; activeIdx=-1; }
+
+        // Render exactly ONE person's record (used when a suggestion is picked).
+        function selectDonor(row){
+            closeSuggestions();
+            nameInput.value = getName(row);
+            const resultDiv = document.getElementById('result');
+            renderDonors([row]);
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async function buildSuggestions(){
             try{ await loadAll(); }catch{ return; }
-            const v=this.value.trim().toLowerCase();
-            const dl=document.getElementById('nameSuggestions');
-            dl.innerHTML='';
-            if(!v) return;
-            const seen=new Set();
-            allData.filter(r=>getName(r).toLowerCase().includes(v)).forEach(r=>{
-                const n=getName(r);
-                if(seen.has(n)) return;
-                seen.add(n);
-                if(seen.size>8) return;
-                const o=document.createElement('option');o.value=n;dl.appendChild(o);
+            const v = nameInput.value.trim().toLowerCase();
+            if(!v){ closeSuggestions(); return; }
+            sugRows = allData.filter(r => getName(r).toLowerCase().includes(v)).slice(0, 10);
+            activeIdx = -1;
+            if(!sugRows.length){ closeSuggestions(); return; }
+            sugBox.innerHTML = sugRows.map((r, i) =>
+                `<div class="sug-item" data-i="${i}">
+                    <span class="sug-name">${escapeHtml(getName(r))}</span>
+                    <span class="sug-cat">${CAT_LABEL[getCat(r)] || ''}</span>
+                 </div>`
+            ).join('');
+            sugBox.classList.add('open');
+            sugBox.querySelectorAll('.sug-item').forEach(el => {
+                el.addEventListener('mousedown', e => { e.preventDefault(); selectDonor(sugRows[+el.dataset.i]); });
             });
+        }
+
+        function highlight(idx){
+            const items = sugBox.querySelectorAll('.sug-item');
+            items.forEach(el => el.classList.remove('active'));
+            if(idx >= 0 && idx < items.length){ items[idx].classList.add('active'); items[idx].scrollIntoView({block:'nearest'}); }
+        }
+
+        nameInput.addEventListener('input', buildSuggestions);
+        nameInput.addEventListener('focus', () => { if(nameInput.value.trim()) buildSuggestions(); });
+        nameInput.addEventListener('keydown', e => {
+            if(!sugBox.classList.contains('open')) return;
+            if(e.key === 'ArrowDown'){ e.preventDefault(); activeIdx = Math.min(activeIdx + 1, sugRows.length - 1); highlight(activeIdx); }
+            else if(e.key === 'ArrowUp'){ e.preventDefault(); activeIdx = Math.max(activeIdx - 1, 0); highlight(activeIdx); }
+            else if(e.key === 'Enter' && activeIdx >= 0){ e.preventDefault(); selectDonor(sugRows[activeIdx]); }
+            else if(e.key === 'Escape'){ closeSuggestions(); }
         });
+        // Close when tapping outside the search field.
+        document.addEventListener('click', e => { if(!e.target.closest('.search-field')) closeSuggestions(); });
     </script>
 </body>
 </html>
