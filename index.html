@@ -160,7 +160,9 @@
         }
         .sug-item:first-child { border-top:none; }
         .sug-item:hover, .sug-item.active { background:#fff2dc; }
+        .sug-text { display:flex; flex-direction:column; gap:2px; min-width:0; }
         .sug-name { font-size:15px; font-weight:700; color:var(--ink); }
+        .sug-alias { font-size:11.5px; color:var(--muted); font-style:italic; }
         .sug-cat { font-size:11px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:999px; padding:2px 8px; white-space:nowrap; }
         .sug-item.active .sug-cat { background:#fff; }
         .search-hint { font-size:13px; color:var(--muted); margin:10px 2px 0; text-align:center; }
@@ -337,6 +339,9 @@
         const getAmount26= r => { const v = pick(r, ['Amount (2026)', 'Amount(2026)']); return (v === undefined ? '' : v.toString()).replace(/[^\d.]/g,''); };
         const getStatus  = r => (pick(r, ['Status']) || '').toString().trim();
         const getGroup   = r => (pick(r, ['Group']) || '').toString().trim();
+        const getAlias   = r => (pick(r, ['Alias', 'alias', 'खोज नाम', 'Nickname']) || '').toString().trim();
+        // Combined searchable text: clean name + any aliases (comma-separated), lowercased.
+        const searchText = r => (getName(r) + ' ' + getAlias(r)).toLowerCase();
         const getCat     = r => r.__cat || '';
 
         // Load all three category tabs once, tag each row with its category, merge.
@@ -362,7 +367,7 @@
             if (!name) return;
             try {
                 await loadAll();
-                const matches = allData.filter(r => getName(r).toLowerCase().includes(name));
+                const matches = allData.filter(r => searchText(r).includes(name));
                 if (matches.length === 1) { selectDonor(matches[0]); }
                 else { buildSuggestions(); }
             } catch (e) { /* autocomplete load errors are shown via toast elsewhere */ }
@@ -511,19 +516,24 @@
             try{ await loadAll(); }catch{ return; }
             const v = nameInput.value.trim().toLowerCase();
             if(!v){ closeSuggestions(); return; }
-            sugRows = allData.filter(r => getName(r).toLowerCase().includes(v)).slice(0, 10);
+            sugRows = allData.filter(r => searchText(r).includes(v)).slice(0, 10);
             activeIdx = -1;
             if(!sugRows.length){
                 sugBox.innerHTML = `<div class="sug-empty">"${escapeHtml(nameInput.value.trim())}" से कोई नाम नहीं मिला — वर्तनी जाँचें 🙏</div>`;
                 sugBox.classList.add('open');
                 return;
             }
-            sugBox.innerHTML = sugRows.map((r, i) =>
-                `<div class="sug-item" data-i="${i}">
-                    <span class="sug-name">${escapeHtml(getName(r))}</span>
+            sugBox.innerHTML = sugRows.map((r, i) => {
+                const alias = getAlias(r);
+                const aliasHtml = alias ? `<span class="sug-alias">उर्फ़: ${escapeHtml(alias)}</span>` : '';
+                return `<div class="sug-item" data-i="${i}">
+                    <span class="sug-text">
+                        <span class="sug-name">${escapeHtml(getName(r))}</span>
+                        ${aliasHtml}
+                    </span>
                     <span class="sug-cat">${CAT_LABEL[getCat(r)] || ''}</span>
-                 </div>`
-            ).join('');
+                 </div>`;
+            }).join('');
             sugBox.classList.add('open');
             sugBox.querySelectorAll('.sug-item').forEach(el => {
                 el.addEventListener('mousedown', e => { e.preventDefault(); selectDonor(sugRows[+el.dataset.i]); });
