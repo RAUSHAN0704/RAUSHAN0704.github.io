@@ -163,6 +163,8 @@
         .sug-name { font-size:15px; font-weight:700; color:var(--ink); }
         .sug-cat { font-size:11px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:999px; padding:2px 8px; white-space:nowrap; }
         .sug-item.active .sug-cat { background:#fff; }
+        .search-hint { font-size:13px; color:var(--muted); margin:10px 2px 0; text-align:center; }
+        .sug-empty { padding:12px; font-size:13px; color:#b5651d; font-style:italic; text-align:center; }
         .donor .row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px dashed #eadbc8; }
         .donor .row:first-of-type { border-top:none; }
         .donor .k { font-size:14px; color:var(--muted); font-weight:600; }
@@ -251,12 +253,10 @@
             <form id="searchForm" onsubmit="handleSearch(event)">
                 <label for="nameInput">अपना नाम लिखें</label>
                 <div class="search-field">
-                    <input type="text" id="nameInput" name="name" placeholder="जैसे: Mithriya Kashyap" required autocomplete="off" />
+                    <input type="text" id="nameInput" name="name" placeholder="जैसे: Mithriya Kashyap" autocomplete="off" />
                     <div class="suggestions" id="nameSuggestions"></div>
                 </div>
-
-                <button type="submit" class="btn btn-primary">खोजें</button>
-                <button type="button" class="btn btn-ghost" onclick="resetAll()">नया खोजें</button>
+                <p class="search-hint">नाम लिखना शुरू करें और सूची में से अपना नाम चुनें 👇</p>
             </form>
             <div class="loading" id="loading">डेटा लोड हो रहा है…</div>
         </div>
@@ -348,39 +348,18 @@
             return allData;
         }
 
+        // No search button: the dropdown drives selection. A bare Enter (nothing highlighted)
+        // just (re)opens the suggestion list; single exact match loads directly.
         async function handleSearch(event) {
             event.preventDefault();
             const name = document.getElementById('nameInput').value.trim().toLowerCase();
-            const resultDiv = document.getElementById('result');
-            const loading = document.getElementById('loading');
-            resultDiv.style.display = 'none';
-            resultDiv.innerHTML = '';
-
-            if (!name) { showToast('कृपया नाम लिखें'); return; }
-
-            loading.style.display = 'block';
+            if (!name) return;
             try {
                 await loadAll();
                 const matches = allData.filter(r => getName(r).toLowerCase().includes(name));
-                loading.style.display = 'none';
-                if (!matches.length) {
-                    resultDiv.innerHTML = `<div class="card"><p class="no-results">"${escapeHtml(name)}" नाम से कोई रिकॉर्ड नहीं मिला।<br/>कृपया वर्तनी जाँचें। 🙏</p></div>`;
-                    resultDiv.style.display = 'block';
-                    return;
-                }
-                // Exactly one person — load them directly. Otherwise open the picker so the
-                // user chooses one (we always show details for a single person at a time).
-                if (matches.length === 1) {
-                    selectDonor(matches[0]);
-                } else {
-                    buildSuggestions();
-                    showToast('कृपया सूची में से अपना नाम चुनें 👇');
-                }
-            } catch (e) {
-                loading.style.display = 'none';
-                resultDiv.innerHTML = `<div class="card"><p class="no-results">त्रुटि: ${escapeHtml(e.message)}</p></div>`;
-                resultDiv.style.display = 'block';
-            }
+                if (matches.length === 1) { selectDonor(matches[0]); }
+                else { buildSuggestions(); }
+            } catch (e) { /* autocomplete load errors are shown via toast elsewhere */ }
         }
 
         function renderDonors(rows) {
@@ -507,7 +486,8 @@
         // Render exactly ONE person's record (used when a suggestion is picked).
         function selectDonor(row){
             closeSuggestions();
-            nameInput.value = getName(row);
+            nameInput.value = '';           // clear the box so it's ready for the next search
+            nameInput.blur();
             const resultDiv = document.getElementById('result');
             renderDonors([row]);
             resultDiv.style.display = 'block';
@@ -520,7 +500,11 @@
             if(!v){ closeSuggestions(); return; }
             sugRows = allData.filter(r => getName(r).toLowerCase().includes(v)).slice(0, 10);
             activeIdx = -1;
-            if(!sugRows.length){ closeSuggestions(); return; }
+            if(!sugRows.length){
+                sugBox.innerHTML = `<div class="sug-empty">"${escapeHtml(nameInput.value.trim())}" से कोई नाम नहीं मिला — वर्तनी जाँचें 🙏</div>`;
+                sugBox.classList.add('open');
+                return;
+            }
             sugBox.innerHTML = sugRows.map((r, i) =>
                 `<div class="sug-item" data-i="${i}">
                     <span class="sug-name">${escapeHtml(getName(r))}</span>
