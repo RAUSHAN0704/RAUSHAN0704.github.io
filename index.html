@@ -405,17 +405,30 @@
         const getCat     = r => r.__cat || '';
 
         // Load all three category tabs once, tag each row with its category, merge.
+        // Resilient: a single failing/slow tab (common on mobile) must not blank the others,
+        // and an INCOMPLETE load is never cached — otherwise the dues list could get stuck
+        // showing only the one category that happened to load. We only lock the cache in
+        // once all three tabs succeed.
+        let loadedComplete = false;
         async function loadAll() {
-            if (allData.length) return allData;
+            if (loadedComplete && allData.length) return allData;
             const types = Object.keys(SHEET_GID);
-            const results = await Promise.all(types.map(async type => {
+            const settled = await Promise.allSettled(types.map(async type => {
                 const res = await fetch(sheetUrl(type), { cache: 'no-store' });
                 const txt = await res.text();
                 return Papa.parse(txt, { header: true, skipEmptyLines: true }).data
                         .filter(r => getName(r).trim() !== '')
                         .map(r => { r.__cat = type; return r; });
             }));
-            allData = results.flat();
+            const rows = [];
+            let okCount = 0;
+            settled.forEach((s, i) => {
+                if (s.status === 'fulfilled') { rows.push(...s.value); okCount++; }
+                else { console.warn('Sheet tab failed to load:', types[i], s.reason); }
+            });
+            allData = rows;
+            loadedComplete = (okCount === types.length); // only cache a full load
+            if (!loadedComplete && okCount === 0) throw new Error('No sheet tabs loaded');
             return allData;
         }
 
