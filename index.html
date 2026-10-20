@@ -238,6 +238,30 @@
         .footer .jai { color:var(--maroon); font-weight:800; font-size:14px; }
         .site-link { display:inline-block; margin:10px 0 4px; color:var(--red); font-weight:800; font-size:14px; text-decoration:none; border:1.5px solid #e7cdb8; border-radius:999px; padding:8px 18px; background:#fff; }
         .site-link:active { filter:brightness(1.05); }
+        .menu-row { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:8px; }
+        .menu-row .site-link { margin:4px 0; }
+        .menu-btn { font-family:inherit; cursor:pointer; }
+        .menu-btn.active { background:linear-gradient(90deg, var(--red), var(--saffron)); color:#fff; border-color:transparent; }
+
+        /* ---------- Dues list ---------- */
+        .dues-head { text-align:center; margin:0 0 6px; }
+        .dues-head h2 { margin:0 0 4px; }
+        .dues-sub { font-size:13px; color:var(--muted); margin:0 0 12px; line-height:1.5; }
+        .dues-sub b { color:var(--maroon); }
+        .dues-cat { margin-top:14px; }
+        .dues-cat:first-of-type { margin-top:4px; }
+        .dues-cat-title { font-size:14px; font-weight:800; color:var(--maroon); background:#fff2dc; border:1px solid #f0d4a8; border-radius:10px; padding:7px 12px; display:flex; justify-content:space-between; align-items:center; }
+        .dues-cat-title .cnt { font-size:12px; font-weight:800; color:var(--red); background:#fff; border:1px solid #f0d4a8; border-radius:999px; padding:1px 9px; }
+        .dues-item { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:9px 10px; border-bottom:1px dashed #eadbc8; }
+        .dues-item:last-child { border-bottom:none; }
+        .dues-id { display:flex; flex-direction:column; gap:1px; min-width:0; }
+        .dues-name { font-size:15px; font-weight:700; color:var(--ink); }
+        .dues-rel { font-size:12px; color:var(--muted); font-style:italic; }
+        .dues-last { font-size:13px; color:var(--muted); font-weight:700; white-space:nowrap; text-align:right; }
+        .dues-last b { color:var(--green); }
+        .dues-none { text-align:center; color:var(--green); font-style:italic; padding:14px; font-weight:700; }
+        .dues-total { text-align:center; font-size:13px; color:var(--muted); margin-top:12px; font-weight:700; }
+        .dues-total b { color:var(--red); }
 
         .toast {
             position: fixed; left:50%; bottom:24px; transform:translateX(-50%);
@@ -256,7 +280,10 @@
                 आपके पिछले वर्ष के <b>स्नेह और सहयोग</b> के लिए हार्दिक धन्यवाद! 🙏<br />
                 नीचे अपना नाम खोजें और इस वर्ष माँ दुर्गा की सेवा में अपना योगदान दें।
             </p>
-            <a class="site-link" href="https://durgapujasarmera.com/" target="_blank" rel="noopener noreferrer">🌐 हमारी वेबसाइट देखें</a>
+            <div class="menu-row">
+                <a class="site-link" href="https://durgapujasarmera.com/" target="_blank" rel="noopener noreferrer">🌐 हमारी वेबसाइट देखें</a>
+                <button type="button" class="site-link menu-btn" id="duesBtn" onclick="toggleDues()">📋 इस वर्ष की बकाया सूची</button>
+            </div>
         </div>
 
         <!-- Search -->
@@ -272,6 +299,9 @@
             </form>
             <div class="loading" id="loading">डेटा लोड हो रहा है…</div>
         </div>
+
+        <!-- Dues list (this year's pending) — toggled by the menu button -->
+        <div id="duesPanel"></div>
 
         <!-- Results injected here -->
         <div id="result"></div>
@@ -527,7 +557,84 @@
         function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
 
         function resetSearch(){document.getElementById('nameInput').value='';document.getElementById('result').style.display='none';}
-        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';closeSuggestions();window.scrollTo({top:0,behavior:'smooth'});}
+        function resetAll(){document.getElementById('searchForm').reset();document.getElementById('result').style.display='none';closeSuggestions();hideDues();window.scrollTo({top:0,behavior:'smooth'});}
+
+        // ---- Dues list: everyone whose 2026 column is blank (i.e. not yet contributed this year) ----
+        // A row is "due" when its Amount (2026) is empty/zero. We show it grouped by category
+        // with last year's (2025) amount as a reference for what's typically expected.
+        let duesOpen = false;
+
+        function isDue(r){ return (parseFloat(getAmount26(r)) || 0) === 0; }
+
+        function hideDues(){
+            duesOpen = false;
+            document.getElementById('duesPanel').innerHTML = '';
+            document.getElementById('duesBtn').classList.remove('active');
+        }
+
+        async function toggleDues(){
+            if (duesOpen) { hideDues(); return; }
+            const btn = document.getElementById('duesBtn');
+            const panel = document.getElementById('duesPanel');
+            // hide any open search result so only one view shows at a time
+            document.getElementById('result').style.display = 'none';
+            closeSuggestions();
+            panel.innerHTML = '<div class="card"><p class="loading" style="display:block">सूची लोड हो रही है…</p></div>';
+            btn.classList.add('active');
+            duesOpen = true;
+            try { await loadAll(); } catch { panel.innerHTML = '<div class="card"><p class="no-results">सूची लोड नहीं हो सकी — कृपया फिर प्रयास करें।</p></div>'; return; }
+            buildDues();
+            panel.scrollIntoView({ behavior:'smooth', block:'start' });
+        }
+
+        function buildDues(){
+            const panel = document.getElementById('duesPanel');
+            const due = allData.filter(isDue);
+
+            if (!due.length){
+                panel.innerHTML = `<div class="card">
+                    <div class="dues-head"><h2>📋 इस वर्ष की बकाया सूची (2026)</h2></div>
+                    <p class="dues-none">🎉 सभी का योगदान प्राप्त हो चुका है — कोई बकाया नहीं!</p>
+                </div>`;
+                return;
+            }
+
+            // Group by category, preserving the navyuvak → gramin → patna order.
+            const order = ['navyuvak', 'gramin', 'patna'];
+            let catHtml = '';
+            order.forEach(cat => {
+                const rows = due.filter(r => getCat(r) === cat)
+                                .sort((a,b) => getName(a).localeCompare(getName(b)));
+                if (!rows.length) return;
+                const items = rows.map(r => {
+                    const a25 = parseFloat(getAmount(r)) || 0;
+                    const rel = getRelation(r) ? `<span class="dues-rel">${escapeHtml(getRelation(r))}</span>` : '';
+                    const last = a25 > 0
+                        ? `<span class="dues-last">पिछले वर्ष<br><b>₹ ${a25.toLocaleString('en-IN')}</b></span>`
+                        : '';
+                    return `<div class="dues-item">
+                                <span class="dues-id">
+                                    <span class="dues-name">${escapeHtml(getName(r))}</span>
+                                    ${rel}
+                                </span>
+                                ${last}
+                            </div>`;
+                }).join('');
+                catHtml += `<div class="dues-cat">
+                                <div class="dues-cat-title"><span>${CAT_LABEL[cat]}</span><span class="cnt">${rows.length}</span></div>
+                                ${items}
+                            </div>`;
+            });
+
+            panel.innerHTML = `<div class="card">
+                <div class="dues-head">
+                    <h2>📋 इस वर्ष की बकाया सूची (2026)</h2>
+                    <p class="dues-sub">जिनका इस वर्ष का योगदान <b>अभी तक प्राप्त नहीं</b> हुआ है। पिछले वर्ष की राशि संदर्भ के लिए दी गई है।</p>
+                </div>
+                ${catHtml}
+                <p class="dues-total">कुल बकाया: <b>${due.length}</b> नाम</p>
+            </div>`;
+        }
 
         // ---- Custom suggestion dropdown: one entry per matching record; selecting auto-loads ONLY that person ----
         const nameInput = document.getElementById('nameInput');
@@ -540,6 +647,7 @@
         // Render exactly ONE person's record (used when a suggestion is picked).
         function selectDonor(row){
             closeSuggestions();
+            hideDues();                     // close the dues list if it was open
             nameInput.value = '';           // clear the box so it's ready for the next search
             nameInput.blur();
             const resultDiv = document.getElementById('result');
