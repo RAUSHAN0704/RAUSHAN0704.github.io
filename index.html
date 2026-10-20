@@ -602,49 +602,40 @@
 
         function buildDues(){
             const panel = document.getElementById('duesPanel');
-            const due = allData.filter(isDue);
+            // Dues list is navyuvak-only (gramin/patna are not tracked for dues here).
+            const due = allData
+                .filter(r => getCat(r) === 'navyuvak' && isDue(r))
+                .sort((a,b) => getName(a).localeCompare(getName(b)));
 
             if (!due.length){
                 panel.innerHTML = `<div class="card">
-                    <div class="dues-head"><h2>📋 इस वर्ष की बकाया सूची (2026)</h2></div>
-                    <p class="dues-none">🎉 सभी का योगदान प्राप्त हो चुका है — कोई बकाया नहीं!</p>
+                    <div class="dues-head"><h2>📋 इस वर्ष की बकाया सूची (नवयुवक)</h2></div>
+                    <p class="dues-none">🎉 नवयुवक चंदा में सभी का योगदान प्राप्त हो चुका है — कोई बकाया नहीं!</p>
                 </div>`;
                 return;
             }
 
-            // Group by category, preserving the navyuvak → gramin → patna order.
-            const order = ['navyuvak', 'gramin', 'patna'];
-            let catHtml = '';
-            order.forEach(cat => {
-                const rows = due.filter(r => getCat(r) === cat)
-                                .sort((a,b) => getName(a).localeCompare(getName(b)));
-                if (!rows.length) return;
-                const items = rows.map(r => {
-                    const a25 = parseFloat(getAmount(r)) || 0;
-                    const rel = getRelation(r) ? `<span class="dues-rel">${escapeHtml(getRelation(r))}</span>` : '';
-                    const last = a25 > 0
-                        ? `<span class="dues-last">पिछले वर्ष<br><b>₹ ${a25.toLocaleString('en-IN')}</b></span>`
-                        : '';
-                    return `<div class="dues-item">
-                                <span class="dues-id">
-                                    <span class="dues-name">${escapeHtml(getName(r))}</span>
-                                    ${rel}
-                                </span>
-                                ${last}
-                            </div>`;
-                }).join('');
-                catHtml += `<div class="dues-cat">
-                                <div class="dues-cat-title"><span>${CAT_LABEL[cat]}</span><span class="cnt">${rows.length}</span></div>
-                                ${items}
-                            </div>`;
-            });
+            const items = due.map(r => {
+                const a25 = parseFloat(getAmount(r)) || 0;
+                const rel = getRelation(r) ? `<span class="dues-rel">${escapeHtml(getRelation(r))}</span>` : '';
+                const last = a25 > 0
+                    ? `<span class="dues-last">पिछले वर्ष<br><b>₹ ${a25.toLocaleString('en-IN')}</b></span>`
+                    : '';
+                return `<div class="dues-item">
+                            <span class="dues-id">
+                                <span class="dues-name">${escapeHtml(getName(r))}</span>
+                                ${rel}
+                            </span>
+                            ${last}
+                        </div>`;
+            }).join('');
 
             panel.innerHTML = `<div class="card">
                 <div class="dues-head">
-                    <h2>📋 इस वर्ष की बकाया सूची (2026)</h2>
-                    <p class="dues-sub">जिनका इस वर्ष का योगदान <b>अभी तक प्राप्त नहीं</b> हुआ है। पिछले वर्ष की राशि संदर्भ के लिए दी गई है।</p>
+                    <h2>📋 इस वर्ष की बकाया सूची (नवयुवक)</h2>
+                    <p class="dues-sub">नवयुवक चंदा में जिनका इस वर्ष का योगदान <b>अभी तक प्राप्त नहीं</b> हुआ है। पिछले वर्ष की राशि संदर्भ के लिए दी गई है।</p>
                 </div>
-                ${catHtml}
+                <div class="dues-cat">${items}</div>
                 <p class="dues-total">कुल बकाया: <b>${due.length}</b> नाम</p>
             </div>`;
         }
